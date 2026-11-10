@@ -9,7 +9,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="Main"
         component={MainVideo}
-        durationInFrames={900} // 30 seconds at 30fps
+        durationInFrames={600} // 20 seconds at 30fps
         fps={30}
         width={1080}
         height={1920}
@@ -19,7 +19,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="Landscape"
         component={MainVideo}
-        durationInFrames={900}
+        durationInFrames={600}
         fps={30}
         width={1920}
         height={1080}

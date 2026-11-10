@@ -2,20 +2,20 @@ import React from "react";
 import {
   AbsoluteFill,
   interpolate,
-  OffthreadVideo,
   Sequence,
   spring,
   staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
+import { AudioLayer, KaraokeSubtitles, KenBurnsVideo } from "./components";
+import subtitlesData from "./subtitles.json";
 
-// --- Design Tokens ---
+// --- Design Tokens (Optimized for 1080x1920 Mobile Reels) ---
 const THEME = {
   bg: "#05070c",
-  bgSubtle: "#0a0f1d",
-  cardBg: "rgba(10, 16, 31, 0.78)",
-  cardBorder: "rgba(56, 189, 248, 0.25)",
+  cardBg: "rgba(10, 16, 31, 0.82)",
+  cardBorder: "rgba(56, 189, 248, 0.35)",
   textPrimary: "#f8fafc",
   textSecondary: "#94a3b8",
   textMuted: "#64748b",
@@ -25,918 +25,783 @@ const THEME = {
   violetGlow: "#c084fc",
   emerald: "#10b981",
   amber: "#f59e0b",
+  rose: "#f43f5e",
   fontFamily:
-    "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', 'Helvetica Neue', sans-serif",
+    "-apple-system, BlinkMacSystemFont, 'Montserrat', 'Inter', 'Helvetica Neue', sans-serif",
 };
 
-// --- Cinematic B-Roll Video Layer (Pixabay Stock Integration) ---
-const CinematicVideoBackground: React.FC = () => {
-  const frame = useCurrentFrame();
-
+// --- Mobile Vignette & Safe Area Gradient Overlay ---
+const MobileVignette: React.FC = () => {
   return (
-    <AbsoluteFill style={{ zIndex: 0, overflow: "hidden", backgroundColor: THEME.bg }}>
-      {/* Clip 1: Cyberpunk City (0s–15s / frames 0–900) */}
-      <Sequence from={0} durationInFrames={900}>
-        <AbsoluteFill>
-          <OffthreadVideo
-            src={staticFile("assets/cyberpunk-city.mp4")}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              transform: `scale(${interpolate(frame, [0, 900], [1.05, 1.16], {
-                extrapolateRight: "clamp",
-              })})`,
-              opacity: 0.38,
-              filter: "saturate(1.25) contrast(1.15) brightness(0.9)",
-            }}
-            muted
-          />
-        </AbsoluteFill>
-      </Sequence>
-
-      {/* Clip 2: Abstract Digital Server Data (15s–30s / frames 900–1800) */}
-      <Sequence from={900} durationInFrames={900}>
-        <AbsoluteFill>
-          <OffthreadVideo
-            src={staticFile("assets/server-data.mp4")}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              transform: `scale(${interpolate(frame - 900, [0, 900], [1.02, 1.15], {
-                extrapolateRight: "clamp",
-              })})`,
-              opacity: 0.32,
-              filter: "saturate(1.3) contrast(1.2) brightness(0.85)",
-            }}
-            muted
-          />
-        </AbsoluteFill>
-      </Sequence>
-
-      {/* Dark Cinematic Gradient Vignette & Tint for Maximum Typography Legibility */}
-      <AbsoluteFill
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(5,7,12,0.85) 0%, rgba(5,7,12,0.65) 50%, rgba(5,7,12,0.92) 100%)",
-        }}
-      />
-
-      {/* Ambient Grid Matrix & Scanline Texture */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          backgroundImage:
-            "linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px)",
-          backgroundSize: "80px 80px",
-          opacity: 0.55,
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          backgroundImage:
-            "repeating-linear-gradient(0deg, rgba(0,0,0,0.18), rgba(0,0,0,0.18) 2px, transparent 2px, transparent 4px)",
-          pointerEvents: "none",
-        }}
-      />
-    </AbsoluteFill>
+    <AbsoluteFill
+      style={{
+        pointerEvents: "none",
+        zIndex: 10,
+        background:
+          "linear-gradient(180deg, rgba(5,7,12,0.85) 0%, rgba(5,7,12,0.35) 25%, rgba(5,7,12,0.35) 68%, rgba(5,7,12,0.92) 100%)",
+      }}
+    />
   );
 };
 
-// --- Scene 1: Kinetic Title Hook (0s–7s / 420 frames) ---
-const SceneOne: React.FC = () => {
+// --- Top HUD Bar ---
+const TopHUDBar: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Entrance springs
-  const kickerSpring = spring({
+  const entrance = spring({
     frame,
     fps,
     config: { damping: 14, stiffness: 120 },
   });
 
-  const titleSpring = spring({
-    frame: frame - 15,
-    fps,
-    config: { damping: 12, stiffness: 110 },
-  });
-
-  const subtitleSpring = spring({
-    frame: frame - 35,
-    fps,
-    config: { damping: 14, stiffness: 100 },
-  });
-
-  const tagsSpring = spring({
-    frame: frame - 55,
-    fps,
-    config: { damping: 14, stiffness: 110 },
-  });
-
-  // Exit transition
-  const exitProgress = interpolate(frame, [360, 420], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const exitOpacity = 1 - exitProgress;
-  const exitScale = 1 + exitProgress * 0.08;
-  const exitFilter = `blur(${exitProgress * 14}px)`;
-
-  const floatY = Math.sin((frame / 60) * Math.PI) * 6;
-
   return (
-    <AbsoluteFill
+    <div
       style={{
+        position: "absolute",
+        top: 90,
+        left: 0,
+        right: 0,
         display: "flex",
-        flexDirection: "column",
         justifyContent: "center",
-        alignItems: "center",
-        padding: "0 140px",
-        fontFamily: THEME.fontFamily,
-        opacity: exitOpacity,
-        transform: `scale(${exitScale}) translateY(${floatY}px)`,
-        filter: exitFilter,
-        zIndex: 1,
+        zIndex: 20,
+        transform: `translateY(${(1 - entrance) * -40}px)`,
+        opacity: entrance,
       }}
     >
-      {/* Top Kicker Badge */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
           gap: 12,
-          padding: "10px 24px",
+          padding: "12px 28px",
           borderRadius: 9999,
-          background: "rgba(6, 182, 212, 0.16)",
-          backdropFilter: "blur(12px)",
-          border: `1px solid ${THEME.cyan}70`,
-          boxShadow: `0 0 30px ${THEME.cyan}35`,
-          transform: `scale(${Math.max(0, kickerSpring)}) translateY(${(1 - kickerSpring) * -30}px)`,
-          opacity: kickerSpring,
-          marginBottom: 32,
+          background: "rgba(10, 16, 31, 0.85)",
+          backdropFilter: "blur(18px)",
+          border: `1px solid ${THEME.cyan}60`,
+          boxShadow: `0 0 25px rgba(6, 182, 212, 0.35)`,
         }}
       >
         <div
           style={{
-            width: 10,
-            height: 10,
+            width: 12,
+            height: 12,
             borderRadius: "50%",
-            backgroundColor: THEME.emerald,
-            boxShadow: `0 0 12px ${THEME.emerald}`,
+            backgroundColor: THEME.rose,
+            boxShadow: `0 0 14px ${THEME.rose}`,
           }}
         />
         <span
           style={{
-            color: THEME.cyanGlow,
-            fontSize: 20,
-            fontWeight: 700,
-            letterSpacing: 3.5,
+            color: THEME.textPrimary,
+            fontSize: 22,
+            fontWeight: 800,
+            letterSpacing: 3,
             textTransform: "uppercase",
+            fontFamily: THEME.fontFamily,
           }}
         >
-          PIXABAY B-ROLL AUTOMATION • 60 FPS MATRIX
+          VIRAL HOOK PSYCHOLOGY
         </span>
       </div>
+    </div>
+  );
+};
 
-      {/* Main Kinetic Headline */}
-      <h1
-        style={{
-          fontSize: 102,
-          fontWeight: 900,
-          textAlign: "center",
-          lineHeight: 1.08,
-          margin: "0 0 24px 0",
-          letterSpacing: -2.5,
-          color: THEME.textPrimary,
-          transform: `scale(${Math.max(0, titleSpring)}) translateY(${(1 - titleSpring) * 40}px)`,
-          opacity: titleSpring,
-        }}
-      >
-        THE ZERO-COMPUTE{" "}
-        <span
-          style={{
-            background: `linear-gradient(135deg, ${THEME.cyanGlow} 0%, #818cf8 50%, ${THEME.violetGlow} 100%)`,
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            textShadow: `0 0 45px rgba(56, 189, 248, 0.45)`,
-          }}
-        >
-          REVOLUTION
-        </span>
-      </h1>
+// --- Scene 1: 00:03 Stopwatch Countdown Window (0.0s–2.5s / frames 0–75) ---
+const SceneOne: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
 
-      {/* Supporting Subtitle */}
-      <p
-        style={{
-          fontSize: 34,
-          fontWeight: 400,
-          color: THEME.textSecondary,
-          textAlign: "center",
-          maxWidth: 1250,
-          lineHeight: 1.5,
-          margin: "0 0 44px 0",
-          transform: `translateY(${(1 - subtitleSpring) * 30}px)`,
-          opacity: subtitleSpring,
-        }}
-      >
-        Author timelines locally with instant lightweight feedback. Offload heavy
-        60fps rendering to parallel cloud runner matrixes at{" "}
-        <strong style={{ color: THEME.emerald, fontWeight: 700 }}>$0 cost</strong>.
-      </p>
+  const popSpring = spring({
+    frame,
+    fps,
+    config: { damping: 11, stiffness: 140 },
+  });
 
-      {/* Feature Badges Row */}
+  const countdown = Math.max(0, 3 - Math.floor(frame / (fps / 3)));
+  const pulse = interpolate(Math.sin((frame / 6) * Math.PI), [-1, 1], [0.96, 1.04]);
+
+  return (
+    <AbsoluteFill
+      style={{
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 15,
+        fontFamily: THEME.fontFamily,
+      }}
+    >
       <div
         style={{
           display: "flex",
-          gap: 20,
-          transform: `translateY(${(1 - tagsSpring) * 20}px)`,
-          opacity: tagsSpring,
+          flexDirection: "column",
+          alignItems: "center",
+          transform: `scale(${popSpring * pulse})`,
+          opacity: popSpring,
         }}
       >
-        {[
-          { label: "PIXABAY 1080P B-ROLL", color: THEME.cyan },
-          { label: "0% LOCAL CPU/GPU", color: THEME.emerald },
-          { label: "20× CLOUD RUNNERS", color: THEME.purple },
-          { label: "MCP AI PIPELINE", color: THEME.amber },
-        ].map((badge, idx) => (
-          <div
-            key={idx}
+        {/* Giant Circular Digital Timer Badge */}
+        <div
+          style={{
+            width: 320,
+            height: 320,
+            borderRadius: "50%",
+            background: "rgba(10, 16, 31, 0.9)",
+            backdropFilter: "blur(24px)",
+            border: `5px solid ${THEME.amber}`,
+            boxShadow: `0 0 60px ${THEME.amber}60, inset 0 0 40px ${THEME.amber}30`,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: 36,
+          }}
+        >
+          <span style={{ fontSize: 44 }}>⏱️</span>
+          <span
             style={{
-              padding: "10px 22px",
-              borderRadius: 12,
-              background: "rgba(10, 16, 31, 0.85)",
-              backdropFilter: "blur(14px)",
-              border: `1px solid ${badge.color}55`,
-              color: THEME.textPrimary,
-              fontSize: 18,
-              fontWeight: 700,
-              letterSpacing: 1.5,
-              boxShadow: `0 4px 20px rgba(0,0,0,0.5)`,
+              fontSize: 104,
+              fontWeight: 900,
+              color: THEME.amber,
+              lineHeight: 1,
+              letterSpacing: -2,
+              textShadow: `0 0 35px ${THEME.amber}80`,
             }}
           >
-            {badge.label}
-          </div>
-        ))}
+            00:0{countdown}
+          </span>
+          <span
+            style={{
+              fontSize: 18,
+              fontWeight: 800,
+              color: THEME.textSecondary,
+              letterSpacing: 2,
+              marginTop: 6,
+            }}
+          >
+            SECONDS
+          </span>
+        </div>
+
+        {/* Warning Badge */}
+        <div
+          style={{
+            background: "rgba(244, 63, 94, 0.2)",
+            border: `2px solid ${THEME.rose}`,
+            borderRadius: 16,
+            padding: "14px 34px",
+            boxShadow: `0 0 30px rgba(244, 63, 94, 0.4)`,
+          }}
+        >
+          <span
+            style={{
+              color: "#ffffff",
+              fontSize: 32,
+              fontWeight: 900,
+              letterSpacing: 2,
+              textTransform: "uppercase",
+            }}
+          >
+            CRITICAL ATTENTION WINDOW
+          </span>
+        </div>
       </div>
     </AbsoluteFill>
   );
 };
 
-// --- Scene 2: 3-Point Feature Breakdown (7s–15s / 480 frames) ---
+// --- Scene 2: Social Media Swipe Simulator (2.5s–5.0s / frames 75–150) ---
 const SceneTwo: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const headerSpring = spring({
+  const entrance = spring({
     frame,
     fps,
-    config: { damping: 14, stiffness: 120 },
+    config: { damping: 12, stiffness: 130 },
   });
 
-  const card1Spring = spring({
-    frame: frame - 18,
-    fps,
-    config: { damping: 13, stiffness: 110 },
-  });
-  const card2Spring = spring({
-    frame: frame - 36,
-    fps,
-    config: { damping: 13, stiffness: 110 },
-  });
-  const card3Spring = spring({
-    frame: frame - 54,
-    fps,
-    config: { damping: 13, stiffness: 110 },
-  });
-
-  const exitProgress = interpolate(frame, [420, 480], [0, 1], {
-    extrapolateLeft: "clamp",
+  const swipeY = interpolate(frame, [0, 45], [0, -140], {
     extrapolateRight: "clamp",
   });
-  const exitOpacity = 1 - exitProgress;
-  const exitScale = 1 - exitProgress * 0.05;
-  const exitFilter = `blur(${exitProgress * 12}px)`;
 
-  const cards = [
-    {
-      springVal: card1Spring,
-      icon: "⚡",
-      badge: "SHARDED MATRIX",
-      badgeColor: THEME.cyan,
-      title: "20× Parallel Cloud Runners",
-      metric: "95% Faster",
-      desc: "Timelines shard automatically across 20 ephemeral GitHub Actions Ubuntu runners, compiling 60fps chunks simultaneously.",
-    },
-    {
-      springVal: card2Spring,
-      icon: "❄️",
-      badge: "INTEGRATED GRAPHICS SAFE",
-      badgeColor: THEME.emerald,
-      title: "0% Local Fan & Thermal Load",
-      metric: "0 dB Noise",
-      desc: "Your local machine stays cool and responsive. Zero thermal throttling, zero fan noise, and zero hardware degradation.",
-    },
-    {
-      springVal: card3Spring,
-      icon: "🧠",
-      badge: "AGENTIC WORKFLOW",
-      badgeColor: THEME.violetGlow,
-      title: "Autonomous MCP Stack",
-      metric: "Free-Tier APIs",
-      desc: "Direct Model Context Protocol hooks for CogVideoX-Flash, Wan 2.1, and remote Kaggle Dual-T4 ComfyUI tunnels.",
-    },
+  return (
+    <AbsoluteFill
+      style={{
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 15,
+        fontFamily: THEME.fontFamily,
+      }}
+    >
+      <div
+        style={{
+          width: 820,
+          background: THEME.cardBg,
+          backdropFilter: "blur(28px)",
+          border: `2px solid ${THEME.cyanGlow}`,
+          borderRadius: 32,
+          padding: "50px 44px",
+          boxShadow: `0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(6, 182, 212, 0.3)`,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          transform: `scale(${entrance}) translateY(${swipeY}px)`,
+          opacity: entrance,
+        }}
+      >
+        <span style={{ fontSize: 64, marginBottom: 16 }}>📱</span>
+        <h2
+          style={{
+            fontSize: 48,
+            fontWeight: 900,
+            color: THEME.textPrimary,
+            margin: "0 0 16px 0",
+            textAlign: "center",
+          }}
+        >
+          FEEDS MOVE AT LIGHTSPEED
+        </h2>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+            background: "rgba(244, 63, 94, 0.18)",
+            border: `1px solid ${THEME.rose}70`,
+            borderRadius: 9999,
+            padding: "10px 24px",
+          }}
+        >
+          <span style={{ fontSize: 24 }}>⬆️</span>
+          <span
+            style={{
+              color: THEME.rose,
+              fontSize: 22,
+              fontWeight: 800,
+              letterSpacing: 1.5,
+            }}
+          >
+            SWIPED AWAY IN 0.3 SECONDS
+          </span>
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// --- Scene 3: The 3 Golden Triggers (5.0s–8.0s / frames 150–240) ---
+const SceneThree: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  const triggers = [
+    { icon: "⚡", title: "SHOCK", subtitle: "Defy common expectations", color: THEME.rose, delay: 0 },
+    { icon: "💡", title: "TEACH", subtitle: "Instant micro-value insight", color: THEME.emerald, delay: 15 },
+    { icon: "🔥", title: "CURIOSITY", subtitle: "Open an irresistible loop", color: THEME.amber, delay: 30 },
   ];
 
   return (
     <AbsoluteFill
       style={{
-        display: "flex",
-        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        padding: "0 100px",
+        zIndex: 15,
         fontFamily: THEME.fontFamily,
-        opacity: exitOpacity,
-        transform: `scale(${exitScale})`,
-        filter: exitFilter,
-        zIndex: 1,
+        padding: "0 80px",
       }}
     >
-      {/* Section Header */}
-      <div
-        style={{
-          textAlign: "center",
-          marginBottom: 50,
-          transform: `translateY(${(1 - headerSpring) * -30}px)`,
-          opacity: headerSpring,
-        }}
-      >
-        <span
-          style={{
-            color: THEME.cyanGlow,
-            fontSize: 18,
-            fontWeight: 800,
-            letterSpacing: 4,
-            textTransform: "uppercase",
-            display: "block",
-            marginBottom: 10,
-          }}
-        >
-          ARCHITECTURAL ADVANTAGE
-        </span>
-        <h2
-          style={{
-            fontSize: 68,
-            fontWeight: 900,
-            color: THEME.textPrimary,
-            margin: 0,
-            letterSpacing: -1.5,
-          }}
-        >
-          Engineered for Pure Velocity
-        </h2>
-      </div>
+      <div style={{ width: "100%", maxWidth: 880, display: "flex", flexDirection: "column", gap: 24 }}>
+        {triggers.map((item, idx) => {
+          const itemSpring = spring({
+            frame: Math.max(0, frame - item.delay),
+            fps,
+            config: { damping: 12, stiffness: 130 },
+          });
 
-      {/* 3 Staggered Cards */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 32,
-          width: "100%",
-          maxWidth: 1680,
-        }}
-      >
-        {cards.map((card, idx) => (
-          <div
-            key={idx}
-            style={{
-              background: THEME.cardBg,
-              backdropFilter: "blur(24px)",
-              border: `1px solid ${card.badgeColor}45`,
-              borderRadius: 24,
-              padding: "44px 36px",
-              boxShadow: `0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)`,
-              display: "flex",
-              flexDirection: "column",
-              position: "relative",
-              overflow: "hidden",
-              transform: `scale(${Math.max(0, card.springVal)}) translateY(${(1 - card.springVal) * 50}px)`,
-              opacity: card.springVal,
-            }}
-          >
-            {/* Top accent light beam */}
+          return (
             <div
+              key={idx}
               style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                height: 3,
-                background: `linear-gradient(90deg, transparent, ${card.badgeColor}, transparent)`,
-              }}
-            />
-
-            {/* Header row: Icon + Pill */}
-            <div
-              style={{
+                background: THEME.cardBg,
+                backdropFilter: "blur(24px)",
+                border: `2px solid ${item.color}70`,
+                borderRadius: 24,
+                padding: "26px 36px",
                 display: "flex",
-                justifyContent: "space-between",
                 alignItems: "center",
-                marginBottom: 28,
+                gap: 28,
+                boxShadow: `0 15px 40px rgba(0,0,0,0.5), 0 0 25px ${item.color}30`,
+                transform: `translateX(${(1 - itemSpring) * -60}px) scale(${itemSpring})`,
+                opacity: itemSpring,
               }}
             >
-              <span style={{ fontSize: 44 }}>{card.icon}</span>
-              <span
-                style={{
-                  fontSize: 14,
-                  fontWeight: 800,
-                  color: card.badgeColor,
-                  background: `${card.badgeColor}18`,
-                  padding: "6px 14px",
-                  borderRadius: 9999,
-                  letterSpacing: 1.5,
-                  border: `1px solid ${card.badgeColor}40`,
-                }}
-              >
-                {card.badge}
-              </span>
-            </div>
-
-            {/* Title */}
-            <h3
-              style={{
-                fontSize: 32,
-                fontWeight: 800,
-                color: THEME.textPrimary,
-                margin: "0 0 14px 0",
-                lineHeight: 1.25,
-              }}
-            >
-              {card.title}
-            </h3>
-
-            {/* Metric Callout */}
-            <div
-              style={{
-                fontSize: 22,
-                fontWeight: 800,
-                color: card.badgeColor,
-                marginBottom: 16,
-              }}
-            >
-              {card.metric}
-            </div>
-
-            {/* Description */}
-            <p
-              style={{
-                fontSize: 20,
-                color: THEME.textSecondary,
-                lineHeight: 1.6,
-                margin: 0,
-                flex: 1,
-              }}
-            >
-              {card.desc}
-            </p>
-          </div>
-        ))}
-      </div>
-    </AbsoluteFill>
-  );
-};
-
-// --- Scene 3: Dynamic Quote & Highlight Metric (15s–23s / 480 frames) ---
-const SceneThree: React.FC = () => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-
-  const panelSpring = spring({
-    frame,
-    fps,
-    config: { damping: 14, stiffness: 100 },
-  });
-
-  const quoteSpring = spring({
-    frame: frame - 25,
-    fps,
-    config: { damping: 13, stiffness: 110 },
-  });
-
-  const statPillSpring = spring({
-    frame: frame - 45,
-    fps,
-    config: { damping: 12, stiffness: 130 },
-  });
-
-  const glowBorderAngle = (frame / 480) * 360;
-
-  const exitProgress = interpolate(frame, [420, 480], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const exitOpacity = 1 - exitProgress;
-  const exitScale = 1 + exitProgress * 0.05;
-  const exitFilter = `blur(${exitProgress * 14}px)`;
-
-  return (
-    <AbsoluteFill
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "0 140px",
-        fontFamily: THEME.fontFamily,
-        opacity: exitOpacity,
-        transform: `scale(${exitScale})`,
-        filter: exitFilter,
-        zIndex: 1,
-      }}
-    >
-      {/* Outer Glowing Glass Container */}
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 1540,
-          background: "rgba(10, 16, 31, 0.88)",
-          backdropFilter: "blur(32px)",
-          borderRadius: 36,
-          padding: "70px 80px",
-          border: `1px solid rgba(56, 189, 248, 0.4)`,
-          boxShadow: `0 30px 80px rgba(0,0,0,0.65), 0 0 50px rgba(6, 182, 212, 0.2)`,
-          position: "relative",
-          overflow: "hidden",
-          transform: `scale(${Math.max(0, panelSpring)}) translateY(${(1 - panelSpring) * 40}px)`,
-          opacity: panelSpring,
-        }}
-      >
-        {/* Animated Gradient Border Accent */}
-        <div
-          style={{
-            position: "absolute",
-            inset: -2,
-            borderRadius: 38,
-            background: `conic-gradient(from ${glowBorderAngle}deg, ${THEME.cyan}, ${THEME.purple}, ${THEME.emerald}, ${THEME.cyan})`,
-            zIndex: -1,
-            opacity: 0.45,
-            filter: "blur(8px)",
-          }}
-        />
-
-        {/* Top Status & Metrics Bar */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            borderBottom: "1px solid rgba(255,255,255,0.08)",
-            paddingBottom: 36,
-            marginBottom: 44,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <div
-              style={{
-                width: 14,
-                height: 14,
-                borderRadius: "50%",
-                background: THEME.cyanGlow,
-                boxShadow: `0 0 16px ${THEME.cyanGlow}`,
-              }}
-            />
-            <span
-              style={{
-                fontSize: 22,
-                fontWeight: 800,
-                color: THEME.cyanGlow,
-                letterSpacing: 3,
-                textTransform: "uppercase",
-              }}
-            >
-              PIXABAY INTEGRATED CINEMATIC LAYER
-            </span>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 16,
-              background: "rgba(16, 185, 129, 0.15)",
-              border: `1px solid ${THEME.emerald}60`,
-              padding: "10px 24px",
-              borderRadius: 9999,
-              transform: `scale(${Math.max(0, statPillSpring)})`,
-              opacity: statPillSpring,
-            }}
-          >
-            <span style={{ fontSize: 28, fontWeight: 900, color: THEME.emerald }}>
-              1800 FRAMES
-            </span>
-            <span style={{ color: THEME.textMuted }}>•</span>
-            <span style={{ fontSize: 20, fontWeight: 700, color: THEME.textPrimary }}>
-              20 WORKERS @ 60 FPS
-            </span>
-          </div>
-        </div>
-
-        {/* The Quote Body */}
-        <div
-          style={{
-            transform: `translateY(${(1 - quoteSpring) * 30}px)`,
-            opacity: quoteSpring,
-          }}
-        >
-          <p
-            style={{
-              fontSize: 48,
-              fontWeight: 700,
-              color: THEME.textPrimary,
-              lineHeight: 1.35,
-              margin: "0 0 32px 0",
-              letterSpacing: -1,
-            }}
-          >
-            “The era of burning local laptop batteries and enduring 30-minute render
-            delays is over. <span style={{ color: THEME.cyanGlow }}>Autonomous agents code the timeline;</span> parallel
-            cloud runners compile the pixels.”
-          </p>
-
-          {/* Attribution Footer */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
               <div
                 style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: 14,
-                  background: `linear-gradient(135deg, ${THEME.cyan}, ${THEME.purple})`,
+                  width: 72,
+                  height: 72,
+                  borderRadius: 18,
+                  background: `${item.color}25`,
+                  border: `2px solid ${item.color}`,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: 24,
-                  fontWeight: 900,
-                  color: "#fff",
+                  fontSize: 36,
                 }}
               >
-                AG
+                {item.icon}
               </div>
               <div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: THEME.textPrimary }}>
-                  Autonomous Video Studio Protocol
+                <div style={{ fontSize: 38, fontWeight: 900, color: item.color, letterSpacing: 1.5 }}>
+                  {item.title}
                 </div>
-                <div style={{ fontSize: 17, color: THEME.textSecondary }}>
-                  Pixabay Stock B-Roll • GitHub Actions Matrix
+                <div style={{ fontSize: 24, color: THEME.textSecondary, fontWeight: 600 }}>
+                  {item.subtitle}
                 </div>
               </div>
             </div>
-
-            <div
-              style={{
-                fontSize: 32,
-                fontWeight: 900,
-                color: THEME.emerald,
-                textShadow: `0 0 20px rgba(16, 185, 129, 0.4)`,
-              }}
-            >
-              $0.00 LOCAL HARDWARE COST
-            </div>
-          </div>
-        </div>
+          );
+        })}
       </div>
     </AbsoluteFill>
   );
 };
 
-// --- Scene 4: Call to Action Outro (23s–30s / 420 frames) ---
+// --- Scene 4: 97% Drop-Off Alarm (8.0s–11.0s / frames 240–330) ---
 const SceneFour: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const logoSpring = spring({
+  const entrance = spring({
     frame,
     fps,
-    config: { damping: 12, stiffness: 130 },
+    config: { damping: 11, stiffness: 140 },
   });
 
-  const headlineSpring = spring({
-    frame: frame - 15,
-    fps,
-    config: { damping: 14, stiffness: 110 },
-  });
-
-  const cliSpring = spring({
-    frame: frame - 35,
-    fps,
-    config: { damping: 13, stiffness: 110 },
-  });
-
-  const badgesSpring = spring({
-    frame: frame - 55,
-    fps,
-    config: { damping: 14, stiffness: 110 },
-  });
-
-  const ringRotation = (frame / 60) * 45;
-  const pulse = interpolate(Math.sin((frame / 45) * Math.PI), [-1, 1], [0.96, 1.04]);
+  const flash = interpolate(Math.sin((frame / 5) * Math.PI), [-1, 1], [0.8, 1.2]);
 
   return (
     <AbsoluteFill
       style={{
-        display: "flex",
-        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        padding: "0 120px",
+        zIndex: 15,
         fontFamily: THEME.fontFamily,
-        zIndex: 1,
       }}
     >
-      {/* Animated Logo Mark */}
       <div
         style={{
-          width: 140,
-          height: 140,
-          position: "relative",
-          marginBottom: 36,
-          transform: `scale(${Math.max(0, logoSpring) * pulse})`,
-          opacity: logoSpring,
+          width: 840,
+          background: "rgba(20, 8, 14, 0.88)",
+          backdropFilter: "blur(28px)",
+          border: `3px solid ${THEME.rose}`,
+          borderRadius: 36,
+          padding: "60px 48px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          boxShadow: `0 0 60px ${THEME.rose}50`,
+          transform: `scale(${entrance * flash})`,
+          opacity: entrance,
         }}
       >
+        <span style={{ fontSize: 64, marginBottom: 12 }}>⚠️</span>
         <div
           style={{
-            position: "absolute",
-            inset: 0,
-            borderRadius: "50%",
-            border: `2px dashed ${THEME.cyanGlow}`,
-            transform: `rotate(${ringRotation}deg)`,
-            boxShadow: `0 0 30px ${THEME.cyan}40`,
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            inset: 18,
-            borderRadius: 24,
-            background: `linear-gradient(135deg, ${THEME.cyan} 0%, ${THEME.purple} 100%)`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            boxShadow: `0 0 40px ${THEME.purple}60`,
+            fontSize: 120,
+            fontWeight: 900,
+            color: THEME.rose,
+            lineHeight: 1,
+            letterSpacing: -3,
+            textShadow: `0 0 40px ${THEME.rose}80`,
+            marginBottom: 16,
           }}
         >
-          <span style={{ fontSize: 48, fontWeight: 900, color: "#ffffff" }}>▶</span>
+          97%
         </div>
-      </div>
-
-      {/* Headline */}
-      <h2
-        style={{
-          fontSize: 78,
-          fontWeight: 900,
-          color: THEME.textPrimary,
-          margin: "0 0 16px 0",
-          textAlign: "center",
-          letterSpacing: -1.5,
-          transform: `translateY(${(1 - headlineSpring) * 30}px)`,
-          opacity: headlineSpring,
-        }}
-      >
-        START PRODUCING IN THE CLOUD
-      </h2>
-
-      <p
-        style={{
-          fontSize: 28,
-          color: THEME.textSecondary,
-          margin: "0 0 38px 0",
-          textAlign: "center",
-          transform: `translateY(${(1 - headlineSpring) * 20}px)`,
-          opacity: headlineSpring,
-        }}
-      >
-        Autonomous Remotion Studio • Pixabay Stock B-Roll • 60 FPS Parallel Matrix
-      </p>
-
-      {/* Terminal CLI Pill */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 16,
-          background: "rgba(10, 16, 31, 0.92)",
-          backdropFilter: "blur(18px)",
-          border: `1px solid ${THEME.cyan}70`,
-          borderRadius: 18,
-          padding: "16px 36px",
-          marginBottom: 44,
-          boxShadow: `0 10px 40px rgba(0,0,0,0.65), 0 0 30px rgba(6, 182, 212, 0.25)`,
-          transform: `scale(${Math.max(0, cliSpring)})`,
-          opacity: cliSpring,
-        }}
-      >
-        <span style={{ color: THEME.emerald, fontSize: 24, fontWeight: 800 }}>$</span>
-        <code
+        <div
           style={{
-            fontFamily: "monospace",
-            fontSize: 26,
-            fontWeight: 700,
+            fontSize: 34,
+            fontWeight: 800,
             color: THEME.textPrimary,
+            textAlign: "center",
+            letterSpacing: 2,
+            textTransform: "uppercase",
           }}
         >
-          git push origin main:render
-        </code>
-        <span
-          style={{
-            color: THEME.textMuted,
-            fontSize: 18,
-            marginLeft: 12,
-            borderLeft: "1px solid rgba(255,255,255,0.15)",
-            paddingLeft: 16,
-          }}
-        >
-          Triggers 20 parallel cloud runners instantly
-        </span>
-      </div>
-
-      {/* Social / Link Badges */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 24,
-          transform: `translateY(${(1 - badgesSpring) * 20}px)`,
-          opacity: badgesSpring,
-        }}
-      >
-        {[
-          { icon: "⚡", label: "github.com/Aryamanxxx/video-gen-studio", color: THEME.cyan },
-          { icon: "🎬", label: "Pixabay HD B-Roll", color: THEME.purple },
-          { icon: "🛡️", label: "Zero Local Compute Verified", color: THEME.emerald },
-        ].map((badge, idx) => (
-          <div
-            key={idx}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              padding: "10px 20px",
-              borderRadius: 12,
-              background: "rgba(255,255,255,0.06)",
-              backdropFilter: "blur(12px)",
-              border: "1px solid rgba(255,255,255,0.12)",
-              fontSize: 18,
-              fontWeight: 600,
-              color: THEME.textSecondary,
-            }}
-          >
-            <span>{badge.icon}</span>
-            <span style={{ color: THEME.textPrimary }}>{badge.label}</span>
-          </div>
-        ))}
+          DROP OFF BEFORE SECOND THREE
+        </div>
       </div>
     </AbsoluteFill>
   );
 };
 
-// --- Main 30-Second Composition Root (1800 frames @ 60fps) ---
+// --- Scene 5: Banned Weak Intros (11.0s–14.0s / frames 330–420) ---
+const SceneFive: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  const entrance = spring({
+    frame,
+    fps,
+    config: { damping: 12, stiffness: 130 },
+  });
+
+  return (
+    <AbsoluteFill
+      style={{
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 15,
+        fontFamily: THEME.fontFamily,
+      }}
+    >
+      <div
+        style={{
+          width: 860,
+          background: THEME.cardBg,
+          backdropFilter: "blur(28px)",
+          border: `2px solid rgba(244,63,94,0.6)`,
+          borderRadius: 32,
+          padding: "54px 44px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          boxShadow: `0 25px 60px rgba(0,0,0,0.6)`,
+          transform: `scale(${entrance})`,
+          opacity: entrance,
+        }}
+      >
+        <span
+          style={{
+            color: THEME.rose,
+            fontSize: 22,
+            fontWeight: 900,
+            letterSpacing: 3,
+            textTransform: "uppercase",
+            marginBottom: 16,
+          }}
+        >
+          FATAL RETENTION KILLER
+        </span>
+        <p
+          style={{
+            fontSize: 36,
+            fontWeight: 700,
+            color: THEME.textSecondary,
+            textAlign: "center",
+            textDecoration: "line-through",
+            textDecorationColor: THEME.rose,
+            textDecorationThickness: 5,
+            margin: "0 0 24px 0",
+            lineHeight: 1.4,
+          }}
+        >
+          “Hey guys, what is up, today we are going to talk about...”
+        </p>
+        <div
+          style={{
+            background: THEME.rose,
+            color: "#ffffff",
+            padding: "12px 32px",
+            borderRadius: 9999,
+            fontSize: 24,
+            fontWeight: 900,
+            letterSpacing: 2,
+          }}
+        >
+          BAN SLOW INTROS FOREVER
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// --- Scene 6: Algorithm Master Crown (14.0s–17.0s / frames 420–510) ---
+const SceneSix: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  const entrance = spring({
+    frame,
+    fps,
+    config: { damping: 11, stiffness: 130 },
+  });
+
+  const pulse = interpolate(Math.sin((frame / 8) * Math.PI), [-1, 1], [0.97, 1.03]);
+
+  return (
+    <AbsoluteFill
+      style={{
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 15,
+        fontFamily: THEME.fontFamily,
+      }}
+    >
+      <div
+        style={{
+          width: 860,
+          background: "rgba(10, 20, 36, 0.9)",
+          backdropFilter: "blur(28px)",
+          border: `3px solid ${THEME.emerald}`,
+          borderRadius: 36,
+          padding: "60px 48px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          boxShadow: `0 0 60px ${THEME.emerald}45`,
+          transform: `scale(${entrance * pulse})`,
+          opacity: entrance,
+        }}
+      >
+        <span style={{ fontSize: 72, marginBottom: 12 }}>👑</span>
+        <h2
+          style={{
+            fontSize: 54,
+            fontWeight: 900,
+            color: THEME.textPrimary,
+            textAlign: "center",
+            margin: "0 0 16px 0",
+            letterSpacing: -1,
+          }}
+        >
+          MASTER THE HOOK
+        </h2>
+        <div
+          style={{
+            fontSize: 32,
+            fontWeight: 900,
+            color: THEME.emerald,
+            letterSpacing: 2,
+            textTransform: "uppercase",
+            textShadow: `0 0 25px ${THEME.emerald}80`,
+          }}
+        >
+          MASTER THE ALGORITHM
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// --- Scene 7: Save & Follow Outro CTA (17.0s–20.0s / frames 510–600) ---
+const SceneSeven: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  const entrance = spring({
+    frame,
+    fps,
+    config: { damping: 12, stiffness: 120 },
+  });
+
+  return (
+    <AbsoluteFill
+      style={{
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 15,
+        fontFamily: THEME.fontFamily,
+      }}
+    >
+      <div
+        style={{
+          width: 860,
+          background: THEME.cardBg,
+          backdropFilter: "blur(32px)",
+          border: `2px solid ${THEME.cyanGlow}`,
+          borderRadius: 36,
+          padding: "64px 48px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          boxShadow: `0 25px 70px rgba(0,0,0,0.7), 0 0 45px rgba(6, 182, 212, 0.35)`,
+          transform: `scale(${entrance})`,
+          opacity: entrance,
+        }}
+      >
+        <span style={{ fontSize: 68, marginBottom: 16 }}>💾</span>
+        <h2
+          style={{
+            fontSize: 56,
+            fontWeight: 900,
+            color: THEME.textPrimary,
+            textAlign: "center",
+            margin: "0 0 16px 0",
+            letterSpacing: -1,
+          }}
+        >
+          SAVE THIS REEL
+        </h2>
+        <p
+          style={{
+            fontSize: 26,
+            color: THEME.textSecondary,
+            textAlign: "center",
+            margin: "0 0 36px 0",
+          }}
+        >
+          Never post a weak video hook again.
+        </p>
+
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+            background: `linear-gradient(135deg, ${THEME.cyan}, ${THEME.purple})`,
+            padding: "16px 36px",
+            borderRadius: 9999,
+            boxShadow: `0 10px 30px rgba(6, 182, 212, 0.4)`,
+          }}
+        >
+          <span style={{ color: "#ffffff", fontSize: 26, fontWeight: 900 }}>
+            Follow @VideoStudioAI
+          </span>
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// --- Main 20-Second Vertical Reel Composition (600 frames @ 30fps) ---
 export const MainVideo: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: THEME.bg }}>
-      {/* Pixabay Cinematic B-Roll Video Layer */}
-      <CinematicVideoBackground />
+      {/* 1. Cinematic B-Roll Layer with Continuous KenBurns Camera Motions */}
+      {/* Cut 1: Stopwatch Countdown (0s to 2.5s -> 0 to 75 frames) */}
+      <Sequence from={0} durationInFrames={75}>
+        <KenBurnsVideo
+          src={staticFile("assets/stopwatch-timer.mp4")}
+          startScale={1.0}
+          endScale={1.22}
+          panDirection="down"
+          panDistance={40}
+          opacity={0.42}
+        />
+      </Sequence>
 
-      {/* Scene 1: Kinetic Title Hook (0s to 7s -> 0 to 420 frames) */}
-      <Sequence from={0} durationInFrames={420}>
+      {/* Cut 2: Scrolling Phone (2.5s to 5.0s -> 75 to 150 frames) */}
+      <Sequence from={75} durationInFrames={75}>
+        <KenBurnsVideo
+          src={staticFile("assets/phone-scroll.mp4")}
+          startScale={1.18}
+          endScale={1.02}
+          panDirection="up"
+          panDistance={35}
+          opacity={0.38}
+        />
+      </Sequence>
+
+      {/* Cut 3: Walking City Crowd (5.0s to 8.0s -> 150 to 240 frames) */}
+      <Sequence from={150} durationInFrames={90}>
+        <KenBurnsVideo
+          src={staticFile("assets/city-crowd.mp4")}
+          startScale={1.02}
+          endScale={1.20}
+          panDirection="left"
+          panDistance={45}
+          opacity={0.40}
+        />
+      </Sequence>
+
+      {/* Cut 4: Scrolling Phone Fast Swipe (8.0s to 11.0s -> 240 to 330 frames) */}
+      <Sequence from={240} durationInFrames={90}>
+        <KenBurnsVideo
+          src={staticFile("assets/phone-scroll.mp4")}
+          startScale={1.0}
+          endScale={1.22}
+          panDirection="right"
+          panDistance={40}
+          opacity={0.38}
+        />
+      </Sequence>
+
+      {/* Cut 5: Stopwatch Time Elapsed (11.0s to 14.0s -> 330 to 420 frames) */}
+      <Sequence from={330} durationInFrames={90}>
+        <KenBurnsVideo
+          src={staticFile("assets/stopwatch-timer.mp4")}
+          startScale={1.22}
+          endScale={1.04}
+          panDirection="down"
+          panDistance={35}
+          opacity={0.42}
+        />
+      </Sequence>
+
+      {/* Cut 6: City Crowd Peak Reach (14.0s to 17.0s -> 420 to 510 frames) */}
+      <Sequence from={420} durationInFrames={90}>
+        <KenBurnsVideo
+          src={staticFile("assets/city-crowd.mp4")}
+          startScale={1.0}
+          endScale={1.25}
+          panDirection="up"
+          panDistance={50}
+          opacity={0.42}
+        />
+      </Sequence>
+
+      {/* Cut 7: Outro Digital Server Grid (17.0s to 20.0s -> 510 to 600 frames) */}
+      <Sequence from={510} durationInFrames={90}>
+        <KenBurnsVideo
+          src={staticFile("assets/server-data.mp4")}
+          startScale={1.05}
+          endScale={1.18}
+          panDirection="left"
+          panDistance={30}
+          opacity={0.36}
+        />
+      </Sequence>
+
+      {/* 2. Dark Vignette & Safe Zones */}
+      <MobileVignette />
+
+      {/* 3. Persistent Top HUD Header */}
+      <TopHUDBar />
+
+      {/* 4. Sequential Kinetic Scene Graphics */}
+      <Sequence from={0} durationInFrames={75}>
         <SceneOne />
       </Sequence>
 
-      {/* Scene 2: 3-Point Feature Breakdown (7s to 15s -> 420 to 900 frames) */}
-      <Sequence from={420} durationInFrames={480}>
+      <Sequence from={75} durationInFrames={75}>
         <SceneTwo />
       </Sequence>
 
-      {/* Scene 3: Dynamic Quote & Highlight Metric (15s to 23s -> 900 to 1380 frames) */}
-      <Sequence from={900} durationInFrames={480}>
+      <Sequence from={150} durationInFrames={90}>
         <SceneThree />
       </Sequence>
 
-      {/* Scene 4: Call to Action Outro (23s to 30s -> 1380 to 1800 frames) */}
-      <Sequence from={1380} durationInFrames={420}>
+      <Sequence from={240} durationInFrames={90}>
         <SceneFour />
       </Sequence>
+
+      <Sequence from={330} durationInFrames={90}>
+        <SceneFive />
+      </Sequence>
+
+      <Sequence from={420} durationInFrames={90}>
+        <SceneSix />
+      </Sequence>
+
+      <Sequence from={510} durationInFrames={90}>
+        <SceneSeven />
+      </Sequence>
+
+      {/* 5. Synchronized Bouncing Karaoke Subtitles */}
+      <KaraokeSubtitles
+        subtitles={subtitlesData}
+        wordsPerChunk={2}
+        fontSize={66}
+        bottomPercentage={23}
+      />
+
+      {/* 6. High-Fidelity Audio Layer */}
+      <AudioLayer
+        voiceoverSrc={staticFile("assets/audio/voiceover.mp3")}
+        subtitles={subtitlesData}
+      />
     </AbsoluteFill>
   );
 };
