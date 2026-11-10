@@ -10,7 +10,7 @@ name: Render Video Matrix (Cloud 60fps)
         description: "Number of parallel workers to shard across"
         required: true
         type: number
-        default: 10
+        default: 20
       remotion_entry_point:
         description: "Remotion entry point file"
         required: true
@@ -22,10 +22,13 @@ name: Render Video Matrix (Cloud 60fps)
         type: string
         default: Main
 
+permissions:
+  contents: write
+
 env:
   REMOTION_ENTRY_POINT: ${{ inputs.remotion_entry_point || 'src/index.ts' }}
   REMOTION_COMPOSITION_ID: ${{ inputs.remotion_composition_id || 'Main' }}
-  NUM_OF_WORKERS: ${{ inputs.num_of_workers || 10 }}
+  NUM_OF_WORKERS: ${{ inputs.num_of_workers || 20 }}
 
 jobs:
   cache-dependencies:
@@ -44,13 +47,33 @@ jobs:
         id: cache-node-modules
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json', '**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
+
+      - name: Cache Browser Binaries (Playwright & Puppeteer)
+        uses: actions/cache@v4
+        id: cache-browsers
+        with:
+          path: |
+            ~/.cache/ms-playwright
+            ~/.cache/puppeteer
+            node_modules/.remotion
+          key: ${{ runner.os }}-browsers-${{ hashFiles('**/package-lock.json', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-browsers-
+
+      - name: Install Browser Binaries if cache missed
+        if: steps.cache-browsers.outputs.cache-hit != 'true'
+        run: |
+          npx remotion browser ensure || true
+          if [ -d "node_modules/playwright" ] || [ -d "node_modules/@playwright/test" ]; then
+            npx playwright install chromium || true
+          fi
 
   build-matrix:
     runs-on: ubuntu-latest
@@ -85,11 +108,24 @@ jobs:
         id: cache-node-modules
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install dependencies if cache missed
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
+
+      - name: Restore Browser Binaries (Playwright & Puppeteer)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+            ~/.cache/puppeteer
+            node_modules/.remotion
+          key: ${{ runner.os }}-browsers-${{ hashFiles('**/package-lock.json', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-browsers-
 
       - name: Query composition frame count
         id: get-total-frames
@@ -124,11 +160,24 @@ jobs:
         id: cache-node-modules
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install dependencies if cache missed
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
+
+      - name: Restore Browser Binaries (Playwright & Puppeteer)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+            ~/.cache/puppeteer
+            node_modules/.remotion
+          key: ${{ runner.os }}-browsers-${{ hashFiles('**/package-lock.json', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-browsers-
 
       - name: Render Audio (or skip gracefully)
         run: |
@@ -179,11 +228,24 @@ jobs:
         id: cache-node-modules
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install dependencies if cache missed
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
+
+      - name: Restore Browser Binaries (Playwright & Puppeteer)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+            ~/.cache/puppeteer
+            node_modules/.remotion
+          key: ${{ runner.os }}-browsers-${{ hashFiles('**/package-lock.json', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-browsers-
 
       - name: Calculate frame range
         run: |
