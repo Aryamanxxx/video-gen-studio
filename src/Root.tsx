@@ -8,15 +8,10 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="Main"
         component={MainVideo}
-        durationInFrames={360} // 6 seconds at 60fps
+        durationInFrames={600} // 10 seconds at 60fps
         fps={60}
         width={1920}
         height={1080}
-        defaultProps={{
-          title: "Autonomous Video Production Studio",
-          subtitle: "Zero-Local-Compute • Cloud Matrix Rendered @ 60 FPS",
-          accentColor: "#6366f1",
-        }}
       />
     </>
   );
