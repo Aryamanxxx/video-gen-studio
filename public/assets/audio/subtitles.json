@@ -1,0 +1,47 @@
+[
+  {
+    "word": "Zero",
+    "start": 0.1,
+    "end": 0.537
+  },
+  {
+    "word": "local",
+    "start": 0.55,
+    "end": 0.925
+  },
+  {
+    "word": "compute",
+    "start": 0.938,
+    "end": 1.35
+  },
+  {
+    "word": "autonomous",
+    "start": 1.363,
+    "end": 1.975
+  },
+  {
+    "word": "video",
+    "start": 1.988,
+    "end": 2.337
+  },
+  {
+    "word": "studio",
+    "start": 2.35,
+    "end": 2.812
+  },
+  {
+    "word": "producing",
+    "start": 2.825,
+    "end": 3.312
+  },
+  {
+    "word": "viral",
+    "start": 3.325,
+    "end": 3.688
+  },
+  {
+    "word": "content",
+    "start": 3.7,
+    "end": 4.312
+  }
+]

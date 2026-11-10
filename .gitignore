@@ -7,10 +7,10 @@ node_modules/
 # Build and Render Outputs
 out/
 outputs/
-*.mp4
-!public/assets/*.mp4
-*.mkv
 workflow_output/
+*.mkv
+*.mp4
+!public/assets/**
 
 # Environment and Secrets
 .env

@@ -10,7 +10,8 @@
     "build:cloud": "remotion render src/index.ts Main outputs/final.mp4",
     "hf:check": "npx hyperframes check --json",
     "hf:preview": "npx hyperframes preview",
-    "skills:list": "npx skills list"
+    "skills:list": "npx skills list",
+    "voice": "node scripts/run-voice.mjs"
   },
   "dependencies": {
     "@remotion/captions": "^4.0.218",
