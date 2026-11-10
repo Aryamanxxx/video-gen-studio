@@ -1,0 +1,253 @@
+name: Render Video Matrix (Cloud 60fps)
+
+"on":
+  push:
+    branches:
+      - render
+  workflow_dispatch:
+    inputs:
+      num_of_workers:
+        description: "Number of parallel workers to shard across"
+        required: true
+        type: number
+        default: 10
+      remotion_entry_point:
+        description: "Remotion entry point file"
+        required: true
+        type: string
+        default: src/index.ts
+      remotion_composition_id:
+        description: "Composition ID to render"
+        required: true
+        type: string
+        default: Main
+
+env:
+  REMOTION_ENTRY_POINT: ${{ inputs.remotion_entry_point || 'src/index.ts' }}
+  REMOTION_COMPOSITION_ID: ${{ inputs.remotion_composition_id || 'Main' }}
+  NUM_OF_WORKERS: ${{ inputs.num_of_workers || 10 }}
+
+jobs:
+  cache-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Cache Node Modules
+        uses: actions/cache@v4
+        id: cache-node-modules
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm ci || npm install
+
+  build-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      workers_matrix: ${{ steps.set-matrix.outputs.workers_matrix }}
+    steps:
+      - name: Calculate Matrix Slices
+        id: set-matrix
+        run: |
+          count=${{ env.NUM_OF_WORKERS }}
+          if [ "$count" -lt 1 ]; then count=1; fi
+          array=($(for i in $(seq 0 $(($count - 1))); do echo "\"$i\""; done))
+          json="["$(echo "${array[@]}" | tr ' ' ',')"]"
+          echo "workers_matrix=$json" >> $GITHUB_OUTPUT
+
+  retrieve-total-frames:
+    runs-on: ubuntu-latest
+    needs: [cache-dependencies]
+    outputs:
+      total_frames: ${{ steps.get-total-frames.outputs.total_frames }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup FFmpeg
+        uses: FedericoCarboni/setup-ffmpeg@v3
+
+      - name: Restore Node Modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
+
+      - name: Query composition frame count
+        id: get-total-frames
+        run: |
+          output=$(npx remotion compositions ${{ env.REMOTION_ENTRY_POINT }})
+          echo "$output"
+          value=$(echo "$output" | awk -v id="${{ env.REMOTION_COMPOSITION_ID }}" '$1==id {print $4}' | tail -n 1)
+          if [ -z "$value" ] || [ "$value" = "" ]; then
+            value=360
+          fi
+          echo "total_frames=$value" >> $GITHUB_OUTPUT
+          echo "Total frames resolved to: $value"
+
+  render-audio:
+    runs-on: ubuntu-latest
+    needs: [cache-dependencies]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup FFmpeg
+        uses: FedericoCarboni/setup-ffmpeg@v3
+
+      - name: Restore Node Modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
+
+      - name: Render Audio (or generate silent fallback)
+        run: |
+          mkdir -p workflow_output
+          if npx remotion render ${{ env.REMOTION_ENTRY_POINT }} ${{ env.REMOTION_COMPOSITION_ID }} workflow_output/audio.mp3 --audio-codec=mp3; then
+            echo "Audio rendered successfully"
+          else
+            echo "No audio stream found or render skipped; generating silence track"
+            ffmpeg -f lavfi -i anullsrc=r=48000:cl=stereo -t 1 -q:a 9 -acodec libmp3lame workflow_output/audio.mp3
+          fi
+
+      - name: Upload Audio Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-audio
+          path: workflow_output/audio.mp3
+          retention-days: 1
+
+  render-videos:
+    runs-on: ubuntu-latest
+    needs: [build-matrix, cache-dependencies, retrieve-total-frames]
+    strategy:
+      fail-fast: false
+      matrix:
+        worker_id: ${{ fromJson(needs.build-matrix.outputs.workers_matrix) }}
+    env:
+      TOTAL_FRAMES: ${{ needs.retrieve-total-frames.outputs.total_frames }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup FFmpeg
+        uses: FedericoCarboni/setup-ffmpeg@v3
+
+      - name: Restore Node Modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package.json') }}
+
+      - name: Calculate frame range
+        run: |
+          workers=${{ env.NUM_OF_WORKERS }}
+          total=${{ env.TOTAL_FRAMES }}
+          framesPerWorker=$((total / workers))
+          startFrame=$((${{ matrix.worker_id }} * framesPerWorker))
+          if [ "${{ matrix.worker_id }}" -lt "$((workers - 1))" ]; then
+            endFrame=$((startFrame + framesPerWorker - 1))
+          else
+            endFrame=$((total - 1))
+          fi
+          echo "START_FRAME=$startFrame" >> $GITHUB_ENV
+          echo "END_FRAME=$endFrame" >> $GITHUB_ENV
+          echo "Worker ${{ matrix.worker_id }} rendering frames $startFrame to $endFrame"
+
+      - name: Render Video Chunk (60fps Muted)
+        run: |
+          mkdir -p workflow_output
+          npx remotion render ${{ env.REMOTION_ENTRY_POINT }} ${{ env.REMOTION_COMPOSITION_ID }} \
+            workflow_output/chunk_${{ matrix.worker_id }}.mp4 \
+            --frames=${{ env.START_FRAME }}-${{ env.END_FRAME }} \
+            --muted \
+            --pixel-format=yuv420p
+
+      - name: Upload Chunk Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: chunk-${{ matrix.worker_id }}
+          path: workflow_output/chunk_${{ matrix.worker_id }}.mp4
+          retention-days: 1
+
+  merge-videos:
+    runs-on: ubuntu-latest
+    needs: [render-videos, render-audio]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup FFmpeg
+        uses: FedericoCarboni/setup-ffmpeg@v3
+
+      - name: Download all chunks
+        uses: actions/download-artifact@v4
+        with:
+          pattern: chunk-*
+          path: workflow_chunks
+          merge-multiple: true
+
+      - name: Download audio
+        uses: actions/download-artifact@v4
+        with:
+          name: workflow-audio
+          path: workflow_audio
+
+      - name: Concatenate chunks and mux audio
+        run: |
+          mkdir -p outputs
+          echo "Listing chunks:"
+          ls -la workflow_chunks/
+          # Build ordered file list using sort -V (version/natural sort)
+          find workflow_chunks/ -name 'chunk_*.mp4' | sort -V | awk '{print "file '\''" $0 "'\''"}' > list.txt
+          cat list.txt
+
+          if [ -s workflow_audio/audio.mp3 ]; then
+            ffmpeg -y -f concat -safe 0 -i list.txt -i workflow_audio/audio.mp3 -c:v copy -c:a aac -shortest outputs/final-video-60fps.mp4
+          else
+            ffmpeg -y -f concat -safe 0 -i list.txt -c copy outputs/final-video-60fps.mp4
+          fi
+
+      - name: Upload Final Video Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: studio-rendered-video-60fps
+          path: outputs/final-video-60fps.mp4
+          retention-days: 14
+
+      - name: Create GitHub Release
+        if: github.ref == 'refs/heads/render' || startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: export-${{ github.run_number }}
+          name: "Video Export #${{ github.run_number }} (60fps)"
+          files: outputs/final-video-60fps.mp4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

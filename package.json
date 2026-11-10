@@ -1,0 +1,32 @@
+{
+  "name": "zero-compute-video-studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Zero-Local-Compute Autonomous Video Production Studio with Cloud Matrix Rendering",
+  "scripts": {
+    "start": "remotion preview",
+    "dev": "remotion preview",
+    "still": "remotion still src/index.ts Main out/preview.png",
+    "build:cloud": "remotion render src/index.ts Main outputs/final.mp4",
+    "hf:check": "npx hyperframes check --json",
+    "hf:preview": "npx hyperframes preview",
+    "skills:list": "npx skills list"
+  },
+  "dependencies": {
+    "@remotion/captions": "^4.0.218",
+    "@remotion/cli": "^4.0.218",
+    "@remotion/google-fonts": "^4.0.218",
+    "@remotion/media": "^4.0.218",
+    "@remotion/player": "^4.0.218",
+    "@remotion/transitions": "^4.0.218",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.218"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.2"
+  }
+}

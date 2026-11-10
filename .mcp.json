@@ -1,0 +1,36 @@
+{
+  "mcpServers": {
+    "mcp-video-gen": {
+      "command": ".mcp-servers/mcp-video-gen/.venv/Scripts/python.exe",
+      "args": [
+        "-m",
+        "video_gen.server"
+      ],
+      "env": {
+        "ZHIPU_API_KEY": "${env:ZHIPU_API_KEY}",
+        "SILICONFLOW_API_KEY": "${env:SILICONFLOW_API_KEY}",
+        "GEMINI_API_KEY": "${env:GEMINI_API_KEY}",
+        "DEFAULT_VIDEO_PROVIDER": "cogvideox"
+      }
+    },
+    "remote-comfyui-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "${env:COMFYUI_REMOTE_URL}"
+      ],
+      "url": "${env:COMFYUI_REMOTE_URL}",
+      "env": {
+        "COMFYUI_REMOTE_URL": "${env:COMFYUI_REMOTE_URL}"
+      }
+    },
+    "playwright-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
+    }
+  }
+}
