@@ -26,3 +26,4 @@ yarn-error.log*
 
 # Reference Repos (local reference only)
 .reference-repos/
+.mcp-servers/

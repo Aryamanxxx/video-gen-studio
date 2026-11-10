@@ -237,6 +237,9 @@ jobs:
           name: workflow-audio
           path: workflow_audio
 
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
+
       - name: Concatenate chunks and mux audio
         run: |
           mkdir -p outputs
