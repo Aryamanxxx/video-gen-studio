@@ -2,8 +2,10 @@ import React from "react";
 import {
   AbsoluteFill,
   interpolate,
+  OffthreadVideo,
   Sequence,
   spring,
+  staticFile,
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
@@ -12,8 +14,8 @@ import {
 const THEME = {
   bg: "#05070c",
   bgSubtle: "#0a0f1d",
-  cardBg: "rgba(13, 20, 36, 0.72)",
-  cardBorder: "rgba(56, 189, 248, 0.2)",
+  cardBg: "rgba(10, 16, 31, 0.78)",
+  cardBorder: "rgba(56, 189, 248, 0.25)",
   textPrimary: "#f8fafc",
   textSecondary: "#94a3b8",
   textMuted: "#64748b",
@@ -27,77 +29,77 @@ const THEME = {
     "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', 'Helvetica Neue', sans-serif",
 };
 
-// --- Ambient Kinetic Background (30s / 1800 frames) ---
-const AmbientBackground: React.FC = () => {
+// --- Cinematic B-Roll Video Layer (Pixabay Stock Integration) ---
+const CinematicVideoBackground: React.FC = () => {
   const frame = useCurrentFrame();
 
-  // Slow continuous orbital motions
-  const angle1 = (frame / 1800) * Math.PI * 4;
-  const angle2 = (frame / 1800) * Math.PI * 3 + Math.PI;
-
-  const glow1X = 50 + Math.cos(angle1) * 35;
-  const glow1Y = 40 + Math.sin(angle1) * 25;
-  const glow2X = 50 + Math.cos(angle2) * 32;
-  const glow2Y = 60 + Math.sin(angle2) * 28;
-
-  const pulse = interpolate(Math.sin((frame / 90) * Math.PI), [-1, 1], [0.9, 1.15]);
-
   return (
-    <AbsoluteFill
-      style={{
-        backgroundColor: THEME.bg,
-        overflow: "hidden",
-        zIndex: 0,
-      }}
-    >
-      {/* Cyan/Sky Aurora Orb */}
-      <div
+    <AbsoluteFill style={{ zIndex: 0, overflow: "hidden", backgroundColor: THEME.bg }}>
+      {/* Clip 1: Cyberpunk City (0s–15s / frames 0–900) */}
+      <Sequence from={0} durationInFrames={900}>
+        <AbsoluteFill>
+          <OffthreadVideo
+            src={staticFile("assets/cyberpunk-city.mp4")}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              transform: `scale(${interpolate(frame, [0, 900], [1.05, 1.16], {
+                extrapolateRight: "clamp",
+              })})`,
+              opacity: 0.38,
+              filter: "saturate(1.25) contrast(1.15) brightness(0.9)",
+            }}
+            muted
+          />
+        </AbsoluteFill>
+      </Sequence>
+
+      {/* Clip 2: Abstract Digital Server Data (15s–30s / frames 900–1800) */}
+      <Sequence from={900} durationInFrames={900}>
+        <AbsoluteFill>
+          <OffthreadVideo
+            src={staticFile("assets/server-data.mp4")}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              transform: `scale(${interpolate(frame - 900, [0, 900], [1.02, 1.15], {
+                extrapolateRight: "clamp",
+              })})`,
+              opacity: 0.32,
+              filter: "saturate(1.3) contrast(1.2) brightness(0.85)",
+            }}
+            muted
+          />
+        </AbsoluteFill>
+      </Sequence>
+
+      {/* Dark Cinematic Gradient Vignette & Tint for Maximum Typography Legibility */}
+      <AbsoluteFill
         style={{
-          position: "absolute",
-          top: `${glow1Y}%`,
-          left: `${glow1X}%`,
-          width: 950,
-          height: 950,
-          borderRadius: "50%",
-          background: `radial-gradient(circle, ${THEME.cyan}30 0%, rgba(5,7,12,0) 65%)`,
-          transform: `translate(-50%, -50%) scale(${pulse})`,
-          filter: "blur(90px)",
-          pointerEvents: "none",
+          background:
+            "linear-gradient(180deg, rgba(5,7,12,0.85) 0%, rgba(5,7,12,0.65) 50%, rgba(5,7,12,0.92) 100%)",
         }}
       />
-      {/* Violet/Indigo Aurora Orb */}
-      <div
-        style={{
-          position: "absolute",
-          top: `${glow2Y}%`,
-          left: `${glow2X}%`,
-          width: 1050,
-          height: 1050,
-          borderRadius: "50%",
-          background: `radial-gradient(circle, ${THEME.purple}26 0%, rgba(5,7,12,0) 70%)`,
-          transform: `translate(-50%, -50%) scale(${pulse * 0.95})`,
-          filter: "blur(110px)",
-          pointerEvents: "none",
-        }}
-      />
-      {/* Ambient Grid Matrix */}
+
+      {/* Ambient Grid Matrix & Scanline Texture */}
       <div
         style={{
           position: "absolute",
           inset: 0,
           backgroundImage:
             "linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px)",
-          backgroundSize: "75px 75px",
-          opacity: 0.7,
+          backgroundSize: "80px 80px",
+          opacity: 0.55,
         }}
       />
-      {/* Subtle Scanlines effect */}
       <div
         style={{
           position: "absolute",
           inset: 0,
           backgroundImage:
-            "repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 2px, transparent 2px, transparent 4px)",
+            "repeating-linear-gradient(0deg, rgba(0,0,0,0.18), rgba(0,0,0,0.18) 2px, transparent 2px, transparent 4px)",
           pointerEvents: "none",
         }}
       />
@@ -135,7 +137,7 @@ const SceneOne: React.FC = () => {
     config: { damping: 14, stiffness: 110 },
   });
 
-  // Exit transition (starts at frame 360, finishes by 420)
+  // Exit transition
   const exitProgress = interpolate(frame, [360, 420], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -144,7 +146,6 @@ const SceneOne: React.FC = () => {
   const exitScale = 1 + exitProgress * 0.08;
   const exitFilter = `blur(${exitProgress * 14}px)`;
 
-  // Subtle floating motion
   const floatY = Math.sin((frame / 60) * Math.PI) * 6;
 
   return (
@@ -159,6 +160,7 @@ const SceneOne: React.FC = () => {
         opacity: exitOpacity,
         transform: `scale(${exitScale}) translateY(${floatY}px)`,
         filter: exitFilter,
+        zIndex: 1,
       }}
     >
       {/* Top Kicker Badge */}
@@ -169,9 +171,10 @@ const SceneOne: React.FC = () => {
           gap: 12,
           padding: "10px 24px",
           borderRadius: 9999,
-          background: "rgba(6, 182, 212, 0.12)",
-          border: `1px solid ${THEME.cyan}60`,
-          boxShadow: `0 0 25px ${THEME.cyan}30`,
+          background: "rgba(6, 182, 212, 0.16)",
+          backdropFilter: "blur(12px)",
+          border: `1px solid ${THEME.cyan}70`,
+          boxShadow: `0 0 30px ${THEME.cyan}35`,
           transform: `scale(${Math.max(0, kickerSpring)}) translateY(${(1 - kickerSpring) * -30}px)`,
           opacity: kickerSpring,
           marginBottom: 32,
@@ -195,7 +198,7 @@ const SceneOne: React.FC = () => {
             textTransform: "uppercase",
           }}
         >
-          NEXT-GEN VIDEO STUDIO • ZERO LOCAL RENDER
+          PIXABAY B-ROLL AUTOMATION • 60 FPS MATRIX
         </span>
       </div>
 
@@ -255,7 +258,7 @@ const SceneOne: React.FC = () => {
         }}
       >
         {[
-          { label: "60 FPS MATRIX", color: THEME.cyan },
+          { label: "PIXABAY 1080P B-ROLL", color: THEME.cyan },
           { label: "0% LOCAL CPU/GPU", color: THEME.emerald },
           { label: "20× CLOUD RUNNERS", color: THEME.purple },
           { label: "MCP AI PIPELINE", color: THEME.amber },
@@ -265,13 +268,14 @@ const SceneOne: React.FC = () => {
             style={{
               padding: "10px 22px",
               borderRadius: 12,
-              background: "rgba(15, 23, 42, 0.8)",
+              background: "rgba(10, 16, 31, 0.85)",
+              backdropFilter: "blur(14px)",
               border: `1px solid ${badge.color}55`,
               color: THEME.textPrimary,
               fontSize: 18,
               fontWeight: 700,
               letterSpacing: 1.5,
-              boxShadow: `0 4px 20px rgba(0,0,0,0.4)`,
+              boxShadow: `0 4px 20px rgba(0,0,0,0.5)`,
             }}
           >
             {badge.label}
@@ -287,14 +291,12 @@ const SceneTwo: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Entrance
   const headerSpring = spring({
     frame,
     fps,
     config: { damping: 14, stiffness: 120 },
   });
 
-  // Staggered cards entrance
   const card1Spring = spring({
     frame: frame - 18,
     fps,
@@ -311,7 +313,6 @@ const SceneTwo: React.FC = () => {
     config: { damping: 13, stiffness: 110 },
   });
 
-  // Exit transition (starts at frame 420, finishes by 480)
   const exitProgress = interpolate(frame, [420, 480], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -362,6 +363,7 @@ const SceneTwo: React.FC = () => {
         opacity: exitOpacity,
         transform: `scale(${exitScale})`,
         filter: exitFilter,
+        zIndex: 1,
       }}
     >
       {/* Section Header */}
@@ -414,11 +416,11 @@ const SceneTwo: React.FC = () => {
             key={idx}
             style={{
               background: THEME.cardBg,
-              backdropFilter: "blur(20px)",
-              border: `1px solid ${card.badgeColor}40`,
+              backdropFilter: "blur(24px)",
+              border: `1px solid ${card.badgeColor}45`,
               borderRadius: 24,
               padding: "44px 36px",
-              boxShadow: `0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)`,
+              boxShadow: `0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)`,
               display: "flex",
               flexDirection: "column",
               position: "relative",
@@ -514,7 +516,6 @@ const SceneThree: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Entrance animations
   const panelSpring = spring({
     frame,
     fps,
@@ -533,10 +534,8 @@ const SceneThree: React.FC = () => {
     config: { damping: 12, stiffness: 130 },
   });
 
-  // Border glow animation
   const glowBorderAngle = (frame / 480) * 360;
 
-  // Exit transition (starts at frame 420, finishes by 480)
   const exitProgress = interpolate(frame, [420, 480], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -557,6 +556,7 @@ const SceneThree: React.FC = () => {
         opacity: exitOpacity,
         transform: `scale(${exitScale})`,
         filter: exitFilter,
+        zIndex: 1,
       }}
     >
       {/* Outer Glowing Glass Container */}
@@ -564,12 +564,12 @@ const SceneThree: React.FC = () => {
         style={{
           width: "100%",
           maxWidth: 1540,
-          background: "rgba(10, 15, 29, 0.85)",
-          backdropFilter: "blur(28px)",
+          background: "rgba(10, 16, 31, 0.88)",
+          backdropFilter: "blur(32px)",
           borderRadius: 36,
           padding: "70px 80px",
-          border: `1px solid rgba(56, 189, 248, 0.35)`,
-          boxShadow: `0 30px 80px rgba(0,0,0,0.6), 0 0 50px rgba(6, 182, 212, 0.18)`,
+          border: `1px solid rgba(56, 189, 248, 0.4)`,
+          boxShadow: `0 30px 80px rgba(0,0,0,0.65), 0 0 50px rgba(6, 182, 212, 0.2)`,
           position: "relative",
           overflow: "hidden",
           transform: `scale(${Math.max(0, panelSpring)}) translateY(${(1 - panelSpring) * 40}px)`,
@@ -619,11 +619,10 @@ const SceneThree: React.FC = () => {
                 textTransform: "uppercase",
               }}
             >
-              CLOUD RENDERING VERIFICATION BENCHMARK
+              PIXABAY INTEGRATED CINEMATIC LAYER
             </span>
           </div>
 
-          {/* Staggered Counter Pill */}
           <div
             style={{
               display: "flex",
@@ -699,7 +698,7 @@ const SceneThree: React.FC = () => {
                   Autonomous Video Studio Protocol
                 </div>
                 <div style={{ fontSize: 17, color: THEME.textSecondary }}>
-                  Verified on GitHub Actions Matrix Engine
+                  Pixabay Stock B-Roll • GitHub Actions Matrix
                 </div>
               </div>
             </div>
@@ -726,7 +725,6 @@ const SceneFour: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Entrance
   const logoSpring = spring({
     frame,
     fps,
@@ -751,7 +749,6 @@ const SceneFour: React.FC = () => {
     config: { damping: 14, stiffness: 110 },
   });
 
-  // Animated spinning logo ring
   const ringRotation = (frame / 60) * 45;
   const pulse = interpolate(Math.sin((frame / 45) * Math.PI), [-1, 1], [0.96, 1.04]);
 
@@ -764,6 +761,7 @@ const SceneFour: React.FC = () => {
         alignItems: "center",
         padding: "0 120px",
         fontFamily: THEME.fontFamily,
+        zIndex: 1,
       }}
     >
       {/* Animated Logo Mark */}
@@ -777,7 +775,6 @@ const SceneFour: React.FC = () => {
           opacity: logoSpring,
         }}
       >
-        {/* Outer Rotating Dotted Ring */}
         <div
           style={{
             position: "absolute",
@@ -788,7 +785,6 @@ const SceneFour: React.FC = () => {
             boxShadow: `0 0 30px ${THEME.cyan}40`,
           }}
         />
-        {/* Inner Glowing Hexagon / Core */}
         <div
           style={{
             position: "absolute",
@@ -831,7 +827,7 @@ const SceneFour: React.FC = () => {
           opacity: headlineSpring,
         }}
       >
-        Autonomous Remotion & HyperFrames Studio • 60 FPS Parallel Matrix
+        Autonomous Remotion Studio • Pixabay Stock B-Roll • 60 FPS Parallel Matrix
       </p>
 
       {/* Terminal CLI Pill */}
@@ -840,12 +836,13 @@ const SceneFour: React.FC = () => {
           display: "flex",
           alignItems: "center",
           gap: 16,
-          background: "rgba(10, 15, 29, 0.9)",
-          border: `1px solid ${THEME.cyan}60`,
+          background: "rgba(10, 16, 31, 0.92)",
+          backdropFilter: "blur(18px)",
+          border: `1px solid ${THEME.cyan}70`,
           borderRadius: 18,
           padding: "16px 36px",
           marginBottom: 44,
-          boxShadow: `0 10px 40px rgba(0,0,0,0.6), 0 0 30px rgba(6, 182, 212, 0.25)`,
+          boxShadow: `0 10px 40px rgba(0,0,0,0.65), 0 0 30px rgba(6, 182, 212, 0.25)`,
           transform: `scale(${Math.max(0, cliSpring)})`,
           opacity: cliSpring,
         }}
@@ -886,7 +883,7 @@ const SceneFour: React.FC = () => {
       >
         {[
           { icon: "⚡", label: "github.com/Aryamanxxx/video-gen-studio", color: THEME.cyan },
-          { icon: "🚀", label: "Remotion 4.0 Matrix", color: THEME.purple },
+          { icon: "🎬", label: "Pixabay HD B-Roll", color: THEME.purple },
           { icon: "🛡️", label: "Zero Local Compute Verified", color: THEME.emerald },
         ].map((badge, idx) => (
           <div
@@ -897,8 +894,9 @@ const SceneFour: React.FC = () => {
               gap: 10,
               padding: "10px 20px",
               borderRadius: 12,
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.1)",
+              background: "rgba(255,255,255,0.06)",
+              backdropFilter: "blur(12px)",
+              border: "1px solid rgba(255,255,255,0.12)",
               fontSize: 18,
               fontWeight: 600,
               color: THEME.textSecondary,
@@ -917,8 +915,8 @@ const SceneFour: React.FC = () => {
 export const MainVideo: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: THEME.bg }}>
-      {/* Persistent Ambient Background */}
-      <AmbientBackground />
+      {/* Pixabay Cinematic B-Roll Video Layer */}
+      <CinematicVideoBackground />
 
       {/* Scene 1: Kinetic Title Hook (0s to 7s -> 0 to 420 frames) */}
       <Sequence from={0} durationInFrames={420}>

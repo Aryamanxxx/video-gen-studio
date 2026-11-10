@@ -8,6 +8,7 @@ node_modules/
 out/
 outputs/
 *.mp4
+!public/assets/*.mp4
 *.mkv
 workflow_output/
 
