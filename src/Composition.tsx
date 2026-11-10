@@ -10,27 +10,37 @@ import {
 
 // --- Design Tokens ---
 const THEME = {
-  bg: "#07090e",
-  bgSubtle: "#0e131f",
+  bg: "#05070c",
+  bgSubtle: "#0a0f1d",
+  cardBg: "rgba(13, 20, 36, 0.72)",
+  cardBorder: "rgba(56, 189, 248, 0.2)",
   textPrimary: "#f8fafc",
   textSecondary: "#94a3b8",
   textMuted: "#64748b",
   cyan: "#06b6d4",
-  cyanGlow: "#22d3ee",
+  cyanGlow: "#38bdf8",
   purple: "#8b5cf6",
-  violetGlow: "#a855f7",
+  violetGlow: "#c084fc",
   emerald: "#10b981",
   amber: "#f59e0b",
   fontFamily:
     "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', 'Helvetica Neue', sans-serif",
 };
 
-// --- Ambient Background with subtle kinetic glow ---
+// --- Ambient Kinetic Background (30s / 1800 frames) ---
 const AmbientBackground: React.FC = () => {
   const frame = useCurrentFrame();
-  const glow1X = interpolate(frame, [0, 600], [20, 80]);
-  const glow2Y = interpolate(frame, [0, 600], [80, 20]);
-  const pulse = interpolate(Math.sin((frame / 60) * Math.PI), [-1, 1], [0.85, 1.15]);
+
+  // Slow continuous orbital motions
+  const angle1 = (frame / 1800) * Math.PI * 4;
+  const angle2 = (frame / 1800) * Math.PI * 3 + Math.PI;
+
+  const glow1X = 50 + Math.cos(angle1) * 35;
+  const glow1Y = 40 + Math.sin(angle1) * 25;
+  const glow2X = 50 + Math.cos(angle2) * 32;
+  const glow2Y = 60 + Math.sin(angle2) * 28;
+
+  const pulse = interpolate(Math.sin((frame / 90) * Math.PI), [-1, 1], [0.9, 1.15]);
 
   return (
     <AbsoluteFill
@@ -40,52 +50,62 @@ const AmbientBackground: React.FC = () => {
         zIndex: 0,
       }}
     >
-      {/* Radial Glow 1 (Cyan) */}
+      {/* Cyan/Sky Aurora Orb */}
       <div
         style={{
           position: "absolute",
-          top: "15%",
+          top: `${glow1Y}%`,
           left: `${glow1X}%`,
-          width: 800,
-          height: 800,
+          width: 950,
+          height: 950,
           borderRadius: "50%",
-          background: `radial-gradient(circle, ${THEME.cyan}25 0%, rgba(7,9,14,0) 65%)`,
+          background: `radial-gradient(circle, ${THEME.cyan}30 0%, rgba(5,7,12,0) 65%)`,
           transform: `translate(-50%, -50%) scale(${pulse})`,
-          filter: "blur(60px)",
+          filter: "blur(90px)",
           pointerEvents: "none",
         }}
       />
-      {/* Radial Glow 2 (Purple) */}
+      {/* Violet/Indigo Aurora Orb */}
       <div
         style={{
           position: "absolute",
           top: `${glow2Y}%`,
-          left: "60%",
-          width: 900,
-          height: 900,
+          left: `${glow2X}%`,
+          width: 1050,
+          height: 1050,
           borderRadius: "50%",
-          background: `radial-gradient(circle, ${THEME.purple}20 0%, rgba(7,9,14,0) 70%)`,
+          background: `radial-gradient(circle, ${THEME.purple}26 0%, rgba(5,7,12,0) 70%)`,
           transform: `translate(-50%, -50%) scale(${pulse * 0.95})`,
-          filter: "blur(80px)",
+          filter: "blur(110px)",
           pointerEvents: "none",
         }}
       />
-      {/* Grid Overlay */}
+      {/* Ambient Grid Matrix */}
       <div
         style={{
           position: "absolute",
           inset: 0,
           backgroundImage:
-            "linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px)",
-          backgroundSize: "80px 80px",
-          opacity: 0.6,
+            "linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px)",
+          backgroundSize: "75px 75px",
+          opacity: 0.7,
+        }}
+      />
+      {/* Subtle Scanlines effect */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundImage:
+            "repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 2px, transparent 2px, transparent 4px)",
+          pointerEvents: "none",
         }}
       />
     </AbsoluteFill>
   );
 };
 
-// --- Scene 1: The Problem & The Shift (0s - 2.5s / 150 frames) ---
+// --- Scene 1: Kinetic Title Hook (0s–7s / 420 frames) ---
 const SceneOne: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -94,417 +114,167 @@ const SceneOne: React.FC = () => {
   const kickerSpring = spring({
     frame,
     fps,
-    config: { damping: 14, stiffness: 140 },
-  });
-
-  const mainSpring = spring({
-    frame: frame - 18,
-    fps,
-    config: { damping: 12, stiffness: 120, mass: 0.8 },
-  });
-
-  const subSpring = spring({
-    frame: frame - 38,
-    fps,
-    config: { damping: 16, stiffness: 100 },
-  });
-
-  // Exit transition
-  const exitOpacity = interpolate(frame, [125, 150], [1, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const exitScale = interpolate(frame, [125, 150], [1, 0.92], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-
-  const mainScale = interpolate(mainSpring, [0, 1], [0.8, 1]);
-  const mainY = interpolate(mainSpring, [0, 1], [50, 0]);
-
-  return (
-    <AbsoluteFill
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        opacity: exitOpacity,
-        transform: `scale(${exitScale})`,
-        fontFamily: THEME.fontFamily,
-        padding: "0 100px",
-      }}
-    >
-      <div style={{ textAlign: "center", maxWidth: 1500 }}>
-        {/* Kicker Tag */}
-        <div
-          style={{
-            display: "inline-block",
-            opacity: kickerSpring,
-            transform: `translateY(${interpolate(kickerSpring, [0, 1], [-20, 0])}px)`,
-            padding: "8px 24px",
-            borderRadius: "9999px",
-            border: `1px solid ${THEME.cyan}55`,
-            background: `${THEME.cyan}15`,
-            color: THEME.cyanGlow,
-            fontSize: 22,
-            fontWeight: 700,
-            letterSpacing: "0.15em",
-            textTransform: "uppercase",
-            marginBottom: 32,
-          }}
-        >
-          Integrated GPU? No Problem.
-        </div>
-
-        {/* Main Kinetic Headline */}
-        <h1
-          style={{
-            fontSize: 110,
-            fontWeight: 900,
-            lineHeight: 1.05,
-            letterSpacing: "-0.04em",
-            margin: "0 0 24px 0",
-            opacity: mainSpring,
-            transform: `translateY(${mainY}px) scale(${mainScale})`,
-            color: THEME.textPrimary,
-            textTransform: "uppercase",
-          }}
-        >
-          Zero Local{" "}
-          <span
-            style={{
-              background: `linear-gradient(135deg, ${THEME.cyanGlow} 0%, ${THEME.purple} 100%)`,
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            Compute.
-          </span>
-        </h1>
-
-        {/* Supporting Line */}
-        <p
-          style={{
-            fontSize: 36,
-            fontWeight: 500,
-            color: THEME.textSecondary,
-            margin: 0,
-            opacity: subSpring,
-            transform: `translateY(${interpolate(subSpring, [0, 1], [30, 0])}px)`,
-            letterSpacing: "-0.01em",
-          }}
-        >
-          0% Local CPU Load • $0 Infrastructure Cost • 100% Autonomous
-        </p>
-      </div>
-    </AbsoluteFill>
-  );
-};
-
-// --- Scene 2: Parallel Matrix Rendering (2.5s - 5.0s / 150 frames) ---
-const SceneTwo: React.FC = () => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-
-  const titleSpring = spring({
-    frame,
-    fps,
-    config: { damping: 14, stiffness: 130 },
-  });
-
-  const cardsEntrance = spring({
-    frame: frame - 20,
-    fps,
-    config: { damping: 15, stiffness: 110 },
-  });
-
-  const exitOpacity = interpolate(frame, [125, 150], [1, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  const exitScale = interpolate(frame, [125, 150], [1, 1.05], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-
-  const workers = [
-    { id: "01", status: "Active", time: "1.2s", frames: "0-60" },
-    { id: "02", status: "Active", time: "1.1s", frames: "60-120" },
-    { id: "03", status: "Active", time: "1.3s", frames: "120-180" },
-    { id: "04", status: "Active", time: "1.0s", frames: "180-240" },
-    { id: "05", status: "Active", time: "1.2s", frames: "240-300" },
-  ];
-
-  return (
-    <AbsoluteFill
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        opacity: exitOpacity,
-        transform: `scale(${exitScale})`,
-        fontFamily: THEME.fontFamily,
-        padding: "0 100px",
-      }}
-    >
-      <div style={{ textAlign: "center", marginBottom: 50 }}>
-        <div
-          style={{
-            fontSize: 20,
-            fontWeight: 800,
-            letterSpacing: "0.2em",
-            color: THEME.purple,
-            textTransform: "uppercase",
-            marginBottom: 16,
-            opacity: titleSpring,
-          }}
-        >
-          Cloud-Offloaded Compilation
-        </div>
-        <h2
-          style={{
-            fontSize: 90,
-            fontWeight: 900,
-            lineHeight: 1.1,
-            letterSpacing: "-0.03em",
-            margin: 0,
-            color: THEME.textPrimary,
-            opacity: titleSpring,
-            transform: `translateY(${interpolate(titleSpring, [0, 1], [40, 0])}px)`,
-          }}
-        >
-          60 FPS{" "}
-          <span
-            style={{
-              background: `linear-gradient(135deg, ${THEME.purple} 0%, ${THEME.cyanGlow} 100%)`,
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            Matrix Renderer.
-          </span>
-        </h2>
-      </div>
-
-      {/* Sharded Worker Nodes Display */}
-      <div
-        style={{
-          display: "flex",
-          gap: 24,
-          opacity: cardsEntrance,
-          transform: `translateY(${interpolate(cardsEntrance, [0, 1], [50, 0])}px)`,
-        }}
-      >
-        {workers.map((w, index) => {
-          const itemDelay = frame - (25 + index * 4);
-          const itemSpring = spring({
-            frame: Math.max(0, itemDelay),
-            fps,
-            config: { damping: 12, stiffness: 150 },
-          });
-
-          return (
-            <div
-              key={w.id}
-              style={{
-                width: 260,
-                padding: "24px 20px",
-                borderRadius: 16,
-                background: "rgba(14, 19, 31, 0.75)",
-                border: `1px solid ${THEME.purple}40`,
-                boxShadow: `0 8px 32px rgba(0, 0, 0, 0.4)`,
-                transform: `scale(${interpolate(itemSpring, [0, 1], [0.85, 1])})`,
-                opacity: itemSpring,
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: 16,
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 700,
-                    color: THEME.textMuted,
-                    letterSpacing: "0.08em",
-                  }}
-                >
-                  RUNNER #{w.id}
-                </span>
-                <span
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 700,
-                    color: THEME.emerald,
-                    background: `${THEME.emerald}20`,
-                    padding: "3px 10px",
-                    borderRadius: 9999,
-                  }}
-                >
-                  60 FPS
-                </span>
-              </div>
-              <div
-                style={{
-                  fontSize: 26,
-                  fontWeight: 800,
-                  color: THEME.textPrimary,
-                  marginBottom: 6,
-                }}
-              >
-                Frames {w.frames}
-              </div>
-              <div
-                style={{
-                  fontSize: 14,
-                  color: THEME.textSecondary,
-                  fontWeight: 500,
-                }}
-              >
-                Completed in {w.time}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </AbsoluteFill>
-  );
-};
-
-// --- Scene 3: Generative Cloud AI APIs (5.0s - 7.5s / 150 frames) ---
-const SceneThree: React.FC = () => {
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-
-  const titleSpring = spring({
-    frame,
-    fps,
     config: { damping: 14, stiffness: 120 },
   });
 
-  const badgesSpring = spring({
-    frame: frame - 25,
+  const titleSpring = spring({
+    frame: frame - 15,
+    fps,
+    config: { damping: 12, stiffness: 110 },
+  });
+
+  const subtitleSpring = spring({
+    frame: frame - 35,
+    fps,
+    config: { damping: 14, stiffness: 100 },
+  });
+
+  const tagsSpring = spring({
+    frame: frame - 55,
     fps,
     config: { damping: 14, stiffness: 110 },
   });
 
-  const exitOpacity = interpolate(frame, [125, 150], [1, 0], {
+  // Exit transition (starts at frame 360, finishes by 420)
+  const exitProgress = interpolate(frame, [360, 420], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
-  const exitScale = interpolate(frame, [125, 150], [1, 0.95], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
+  const exitOpacity = 1 - exitProgress;
+  const exitScale = 1 + exitProgress * 0.08;
+  const exitFilter = `blur(${exitProgress * 14}px)`;
 
-  const tools = [
-    { title: "CogVideoX-Flash", desc: "100% Free AI Video Synthesis", tag: "FREE API" },
-    { title: "Wan 2.1 Diffusion", desc: "Photoreal B-Roll Generation", tag: "CLOUD TIER" },
-    { title: "Remote ComfyUI", desc: "Kaggle Dual-T4 via Cloudflare", tag: "GPU TUNNEL" },
-    { title: "Playwright Headless", desc: "Crisp Web UI Walkthroughs", tag: "NATIVE MCP" },
-  ];
+  // Subtle floating motion
+  const floatY = Math.sin((frame / 60) * Math.PI) * 6;
 
   return (
     <AbsoluteFill
       style={{
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
         justifyContent: "center",
-        opacity: exitOpacity,
-        transform: `scale(${exitScale})`,
+        alignItems: "center",
+        padding: "0 140px",
         fontFamily: THEME.fontFamily,
-        padding: "0 100px",
+        opacity: exitOpacity,
+        transform: `scale(${exitScale}) translateY(${floatY}px)`,
+        filter: exitFilter,
       }}
     >
-      <div style={{ textAlign: "center", marginBottom: 50 }}>
-        <div
-          style={{
-            fontSize: 20,
-            fontWeight: 800,
-            letterSpacing: "0.2em",
-            color: THEME.emerald,
-            textTransform: "uppercase",
-            marginBottom: 16,
-            opacity: titleSpring,
-          }}
-        >
-          Model Context Protocol
-        </div>
-        <h2
-          style={{
-            fontSize: 92,
-            fontWeight: 900,
-            letterSpacing: "-0.04em",
-            margin: 0,
-            color: THEME.textPrimary,
-            opacity: titleSpring,
-            transform: `translateY(${interpolate(titleSpring, [0, 1], [40, 0])}px)`,
-          }}
-        >
-          Autonomous Cloud AI Stack.
-        </h2>
-      </div>
-
+      {/* Top Kicker Badge */}
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 24,
-          maxWidth: 1500,
-          width: "100%",
-          opacity: badgesSpring,
-          transform: `translateY(${interpolate(badgesSpring, [0, 1], [40, 0])}px)`,
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          padding: "10px 24px",
+          borderRadius: 9999,
+          background: "rgba(6, 182, 212, 0.12)",
+          border: `1px solid ${THEME.cyan}60`,
+          boxShadow: `0 0 25px ${THEME.cyan}30`,
+          transform: `scale(${Math.max(0, kickerSpring)}) translateY(${(1 - kickerSpring) * -30}px)`,
+          opacity: kickerSpring,
+          marginBottom: 32,
         }}
       >
-        {tools.map((tool, i) => (
+        <div
+          style={{
+            width: 10,
+            height: 10,
+            borderRadius: "50%",
+            backgroundColor: THEME.emerald,
+            boxShadow: `0 0 12px ${THEME.emerald}`,
+          }}
+        />
+        <span
+          style={{
+            color: THEME.cyanGlow,
+            fontSize: 20,
+            fontWeight: 700,
+            letterSpacing: 3.5,
+            textTransform: "uppercase",
+          }}
+        >
+          NEXT-GEN VIDEO STUDIO • ZERO LOCAL RENDER
+        </span>
+      </div>
+
+      {/* Main Kinetic Headline */}
+      <h1
+        style={{
+          fontSize: 102,
+          fontWeight: 900,
+          textAlign: "center",
+          lineHeight: 1.08,
+          margin: "0 0 24px 0",
+          letterSpacing: -2.5,
+          color: THEME.textPrimary,
+          transform: `scale(${Math.max(0, titleSpring)}) translateY(${(1 - titleSpring) * 40}px)`,
+          opacity: titleSpring,
+        }}
+      >
+        THE ZERO-COMPUTE{" "}
+        <span
+          style={{
+            background: `linear-gradient(135deg, ${THEME.cyanGlow} 0%, #818cf8 50%, ${THEME.violetGlow} 100%)`,
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            textShadow: `0 0 45px rgba(56, 189, 248, 0.45)`,
+          }}
+        >
+          REVOLUTION
+        </span>
+      </h1>
+
+      {/* Supporting Subtitle */}
+      <p
+        style={{
+          fontSize: 34,
+          fontWeight: 400,
+          color: THEME.textSecondary,
+          textAlign: "center",
+          maxWidth: 1250,
+          lineHeight: 1.5,
+          margin: "0 0 44px 0",
+          transform: `translateY(${(1 - subtitleSpring) * 30}px)`,
+          opacity: subtitleSpring,
+        }}
+      >
+        Author timelines locally with instant lightweight feedback. Offload heavy
+        60fps rendering to parallel cloud runner matrixes at{" "}
+        <strong style={{ color: THEME.emerald, fontWeight: 700 }}>$0 cost</strong>.
+      </p>
+
+      {/* Feature Badges Row */}
+      <div
+        style={{
+          display: "flex",
+          gap: 20,
+          transform: `translateY(${(1 - tagsSpring) * 20}px)`,
+          opacity: tagsSpring,
+        }}
+      >
+        {[
+          { label: "60 FPS MATRIX", color: THEME.cyan },
+          { label: "0% LOCAL CPU/GPU", color: THEME.emerald },
+          { label: "20× CLOUD RUNNERS", color: THEME.purple },
+          { label: "MCP AI PIPELINE", color: THEME.amber },
+        ].map((badge, idx) => (
           <div
-            key={i}
+            key={idx}
             style={{
-              padding: "32px 28px",
-              borderRadius: 20,
-              background: "rgba(14, 19, 31, 0.8)",
-              border: `1px solid rgba(255, 255, 255, 0.08)`,
-              borderTop: `2px solid ${THEME.cyanGlow}`,
-              boxShadow: "0 10px 40px rgba(0,0,0,0.5)",
+              padding: "10px 22px",
+              borderRadius: 12,
+              background: "rgba(15, 23, 42, 0.8)",
+              border: `1px solid ${badge.color}55`,
+              color: THEME.textPrimary,
+              fontSize: 18,
+              fontWeight: 700,
+              letterSpacing: 1.5,
+              boxShadow: `0 4px 20px rgba(0,0,0,0.4)`,
             }}
           >
-            <div
-              style={{
-                fontSize: 12,
-                fontWeight: 800,
-                color: THEME.cyanGlow,
-                letterSpacing: "0.15em",
-                marginBottom: 12,
-              }}
-            >
-              {tool.tag}
-            </div>
-            <div
-              style={{
-                fontSize: 28,
-                fontWeight: 800,
-                color: THEME.textPrimary,
-                marginBottom: 8,
-              }}
-            >
-              {tool.title}
-            </div>
-            <div
-              style={{
-                fontSize: 16,
-                fontWeight: 500,
-                color: THEME.textSecondary,
-                lineHeight: 1.4,
-              }}
-            >
-              {tool.desc}
-            </div>
+            {badge.label}
           </div>
         ))}
       </div>
@@ -512,152 +282,661 @@ const SceneThree: React.FC = () => {
   );
 };
 
-// --- Scene 4: Climax & CTA (7.5s - 10.0s / 150 frames) ---
-const SceneFour: React.FC = () => {
+// --- Scene 2: 3-Point Feature Breakdown (7s–15s / 480 frames) ---
+const SceneTwo: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const titleSpring = spring({
+  // Entrance
+  const headerSpring = spring({
     frame,
     fps,
-    config: { damping: 12, stiffness: 110, mass: 0.9 },
+    config: { damping: 14, stiffness: 120 },
   });
 
-  const ctaSpring = spring({
-    frame: frame - 22,
+  // Staggered cards entrance
+  const card1Spring = spring({
+    frame: frame - 18,
     fps,
-    config: { damping: 14, stiffness: 140 },
+    config: { damping: 13, stiffness: 110 },
+  });
+  const card2Spring = spring({
+    frame: frame - 36,
+    fps,
+    config: { damping: 13, stiffness: 110 },
+  });
+  const card3Spring = spring({
+    frame: frame - 54,
+    fps,
+    config: { damping: 13, stiffness: 110 },
   });
 
-  const pulse = interpolate(
-    Math.sin((frame / 30) * Math.PI),
-    [-1, 1],
-    [0.98, 1.02]
-  );
+  // Exit transition (starts at frame 420, finishes by 480)
+  const exitProgress = interpolate(frame, [420, 480], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const exitOpacity = 1 - exitProgress;
+  const exitScale = 1 - exitProgress * 0.05;
+  const exitFilter = `blur(${exitProgress * 12}px)`;
+
+  const cards = [
+    {
+      springVal: card1Spring,
+      icon: "⚡",
+      badge: "SHARDED MATRIX",
+      badgeColor: THEME.cyan,
+      title: "20× Parallel Cloud Runners",
+      metric: "95% Faster",
+      desc: "Timelines shard automatically across 20 ephemeral GitHub Actions Ubuntu runners, compiling 60fps chunks simultaneously.",
+    },
+    {
+      springVal: card2Spring,
+      icon: "❄️",
+      badge: "INTEGRATED GRAPHICS SAFE",
+      badgeColor: THEME.emerald,
+      title: "0% Local Fan & Thermal Load",
+      metric: "0 dB Noise",
+      desc: "Your local machine stays cool and responsive. Zero thermal throttling, zero fan noise, and zero hardware degradation.",
+    },
+    {
+      springVal: card3Spring,
+      icon: "🧠",
+      badge: "AGENTIC WORKFLOW",
+      badgeColor: THEME.violetGlow,
+      title: "Autonomous MCP Stack",
+      metric: "Free-Tier APIs",
+      desc: "Direct Model Context Protocol hooks for CogVideoX-Flash, Wan 2.1, and remote Kaggle Dual-T4 ComfyUI tunnels.",
+    },
+  ];
 
   return (
     <AbsoluteFill
       style={{
         display: "flex",
         flexDirection: "column",
-        alignItems: "center",
         justifyContent: "center",
-        fontFamily: THEME.fontFamily,
-        textAlign: "center",
+        alignItems: "center",
         padding: "0 100px",
+        fontFamily: THEME.fontFamily,
+        opacity: exitOpacity,
+        transform: `scale(${exitScale})`,
+        filter: exitFilter,
       }}
     >
-      {/* Studio Header Badge */}
+      {/* Section Header */}
       <div
         style={{
-          opacity: titleSpring,
-          transform: `scale(${interpolate(titleSpring, [0, 1], [0.8, 1])})`,
-          padding: "10px 28px",
-          borderRadius: 9999,
-          background: "rgba(99, 102, 241, 0.15)",
-          border: "1px solid rgba(99, 102, 241, 0.4)",
-          color: "#c7d2fe",
-          fontSize: 20,
-          fontWeight: 700,
-          letterSpacing: "0.18em",
-          textTransform: "uppercase",
-          marginBottom: 32,
+          textAlign: "center",
+          marginBottom: 50,
+          transform: `translateY(${(1 - headerSpring) * -30}px)`,
+          opacity: headerSpring,
         }}
       >
-        Production Studio Live
+        <span
+          style={{
+            color: THEME.cyanGlow,
+            fontSize: 18,
+            fontWeight: 800,
+            letterSpacing: 4,
+            textTransform: "uppercase",
+            display: "block",
+            marginBottom: 10,
+          }}
+        >
+          ARCHITECTURAL ADVANTAGE
+        </span>
+        <h2
+          style={{
+            fontSize: 68,
+            fontWeight: 900,
+            color: THEME.textPrimary,
+            margin: 0,
+            letterSpacing: -1.5,
+          }}
+        >
+          Engineered for Pure Velocity
+        </h2>
       </div>
 
-      {/* Main Punchy Climax Title */}
-      <h1
-        style={{
-          fontSize: 112,
-          fontWeight: 900,
-          lineHeight: 1.05,
-          letterSpacing: "-0.04em",
-          margin: "0 0 24px 0",
-          opacity: titleSpring,
-          transform: `translateY(${interpolate(titleSpring, [0, 1], [50, 0])}px)`,
-          color: THEME.textPrimary,
-          textTransform: "uppercase",
-        }}
-      >
-        Ship 60FPS Video{" "}
-        <span
-          style={{
-            background: `linear-gradient(135deg, ${THEME.cyanGlow} 0%, #a855f7 50%, ${THEME.amber} 100%)`,
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          At Zero Cost.
-        </span>
-      </h1>
-
-      <p
-        style={{
-          fontSize: 34,
-          fontWeight: 500,
-          color: THEME.textSecondary,
-          maxWidth: 1100,
-          margin: "0 0 44px 0",
-          opacity: titleSpring,
-          lineHeight: 1.4,
-        }}
-      >
-        Author locally. Offload all rendering to GitHub Actions matrix runners.
-      </p>
-
-      {/* High-Impact CLI Action Pill */}
+      {/* 3 Staggered Cards */}
       <div
         style={{
-          opacity: ctaSpring,
-          transform: `scale(${interpolate(ctaSpring, [0, 1], [0.85, 1]) * pulse})`,
-          display: "flex",
-          alignItems: "center",
-          gap: 16,
-          background: "rgba(15, 23, 42, 0.9)",
-          border: `2px solid ${THEME.cyanGlow}`,
-          padding: "18px 40px",
-          borderRadius: 16,
-          boxShadow: `0 0 40px ${THEME.cyanGlow}33`,
+          display: "grid",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: 32,
+          width: "100%",
+          maxWidth: 1680,
         }}
       >
-        <span style={{ color: THEME.cyanGlow, fontSize: 28, fontWeight: 900 }}>$</span>
-        <span
-          style={{
-            fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
-            fontSize: 32,
-            fontWeight: 800,
-            color: "#ffffff",
-            letterSpacing: "0.02em",
-          }}
-        >
-          git push origin main:render
-        </span>
+        {cards.map((card, idx) => (
+          <div
+            key={idx}
+            style={{
+              background: THEME.cardBg,
+              backdropFilter: "blur(20px)",
+              border: `1px solid ${card.badgeColor}40`,
+              borderRadius: 24,
+              padding: "44px 36px",
+              boxShadow: `0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)`,
+              display: "flex",
+              flexDirection: "column",
+              position: "relative",
+              overflow: "hidden",
+              transform: `scale(${Math.max(0, card.springVal)}) translateY(${(1 - card.springVal) * 50}px)`,
+              opacity: card.springVal,
+            }}
+          >
+            {/* Top accent light beam */}
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                height: 3,
+                background: `linear-gradient(90deg, transparent, ${card.badgeColor}, transparent)`,
+              }}
+            />
+
+            {/* Header row: Icon + Pill */}
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 28,
+              }}
+            >
+              <span style={{ fontSize: 44 }}>{card.icon}</span>
+              <span
+                style={{
+                  fontSize: 14,
+                  fontWeight: 800,
+                  color: card.badgeColor,
+                  background: `${card.badgeColor}18`,
+                  padding: "6px 14px",
+                  borderRadius: 9999,
+                  letterSpacing: 1.5,
+                  border: `1px solid ${card.badgeColor}40`,
+                }}
+              >
+                {card.badge}
+              </span>
+            </div>
+
+            {/* Title */}
+            <h3
+              style={{
+                fontSize: 32,
+                fontWeight: 800,
+                color: THEME.textPrimary,
+                margin: "0 0 14px 0",
+                lineHeight: 1.25,
+              }}
+            >
+              {card.title}
+            </h3>
+
+            {/* Metric Callout */}
+            <div
+              style={{
+                fontSize: 22,
+                fontWeight: 800,
+                color: card.badgeColor,
+                marginBottom: 16,
+              }}
+            >
+              {card.metric}
+            </div>
+
+            {/* Description */}
+            <p
+              style={{
+                fontSize: 20,
+                color: THEME.textSecondary,
+                lineHeight: 1.6,
+                margin: 0,
+                flex: 1,
+              }}
+            >
+              {card.desc}
+            </p>
+          </div>
+        ))}
       </div>
     </AbsoluteFill>
   );
 };
 
-// --- Root Video Composition (600 frames = 10s @ 60fps) ---
+// --- Scene 3: Dynamic Quote & Highlight Metric (15s–23s / 480 frames) ---
+const SceneThree: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  // Entrance animations
+  const panelSpring = spring({
+    frame,
+    fps,
+    config: { damping: 14, stiffness: 100 },
+  });
+
+  const quoteSpring = spring({
+    frame: frame - 25,
+    fps,
+    config: { damping: 13, stiffness: 110 },
+  });
+
+  const statPillSpring = spring({
+    frame: frame - 45,
+    fps,
+    config: { damping: 12, stiffness: 130 },
+  });
+
+  // Border glow animation
+  const glowBorderAngle = (frame / 480) * 360;
+
+  // Exit transition (starts at frame 420, finishes by 480)
+  const exitProgress = interpolate(frame, [420, 480], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const exitOpacity = 1 - exitProgress;
+  const exitScale = 1 + exitProgress * 0.05;
+  const exitFilter = `blur(${exitProgress * 14}px)`;
+
+  return (
+    <AbsoluteFill
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "0 140px",
+        fontFamily: THEME.fontFamily,
+        opacity: exitOpacity,
+        transform: `scale(${exitScale})`,
+        filter: exitFilter,
+      }}
+    >
+      {/* Outer Glowing Glass Container */}
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 1540,
+          background: "rgba(10, 15, 29, 0.85)",
+          backdropFilter: "blur(28px)",
+          borderRadius: 36,
+          padding: "70px 80px",
+          border: `1px solid rgba(56, 189, 248, 0.35)`,
+          boxShadow: `0 30px 80px rgba(0,0,0,0.6), 0 0 50px rgba(6, 182, 212, 0.18)`,
+          position: "relative",
+          overflow: "hidden",
+          transform: `scale(${Math.max(0, panelSpring)}) translateY(${(1 - panelSpring) * 40}px)`,
+          opacity: panelSpring,
+        }}
+      >
+        {/* Animated Gradient Border Accent */}
+        <div
+          style={{
+            position: "absolute",
+            inset: -2,
+            borderRadius: 38,
+            background: `conic-gradient(from ${glowBorderAngle}deg, ${THEME.cyan}, ${THEME.purple}, ${THEME.emerald}, ${THEME.cyan})`,
+            zIndex: -1,
+            opacity: 0.45,
+            filter: "blur(8px)",
+          }}
+        />
+
+        {/* Top Status & Metrics Bar */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+            paddingBottom: 36,
+            marginBottom: 44,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <div
+              style={{
+                width: 14,
+                height: 14,
+                borderRadius: "50%",
+                background: THEME.cyanGlow,
+                boxShadow: `0 0 16px ${THEME.cyanGlow}`,
+              }}
+            />
+            <span
+              style={{
+                fontSize: 22,
+                fontWeight: 800,
+                color: THEME.cyanGlow,
+                letterSpacing: 3,
+                textTransform: "uppercase",
+              }}
+            >
+              CLOUD RENDERING VERIFICATION BENCHMARK
+            </span>
+          </div>
+
+          {/* Staggered Counter Pill */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 16,
+              background: "rgba(16, 185, 129, 0.15)",
+              border: `1px solid ${THEME.emerald}60`,
+              padding: "10px 24px",
+              borderRadius: 9999,
+              transform: `scale(${Math.max(0, statPillSpring)})`,
+              opacity: statPillSpring,
+            }}
+          >
+            <span style={{ fontSize: 28, fontWeight: 900, color: THEME.emerald }}>
+              1800 FRAMES
+            </span>
+            <span style={{ color: THEME.textMuted }}>•</span>
+            <span style={{ fontSize: 20, fontWeight: 700, color: THEME.textPrimary }}>
+              20 WORKERS @ 60 FPS
+            </span>
+          </div>
+        </div>
+
+        {/* The Quote Body */}
+        <div
+          style={{
+            transform: `translateY(${(1 - quoteSpring) * 30}px)`,
+            opacity: quoteSpring,
+          }}
+        >
+          <p
+            style={{
+              fontSize: 48,
+              fontWeight: 700,
+              color: THEME.textPrimary,
+              lineHeight: 1.35,
+              margin: "0 0 32px 0",
+              letterSpacing: -1,
+            }}
+          >
+            “The era of burning local laptop batteries and enduring 30-minute render
+            delays is over. <span style={{ color: THEME.cyanGlow }}>Autonomous agents code the timeline;</span> parallel
+            cloud runners compile the pixels.”
+          </p>
+
+          {/* Attribution Footer */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <div
+                style={{
+                  width: 48,
+                  height: 48,
+                  borderRadius: 14,
+                  background: `linear-gradient(135deg, ${THEME.cyan}, ${THEME.purple})`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 24,
+                  fontWeight: 900,
+                  color: "#fff",
+                }}
+              >
+                AG
+              </div>
+              <div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: THEME.textPrimary }}>
+                  Autonomous Video Studio Protocol
+                </div>
+                <div style={{ fontSize: 17, color: THEME.textSecondary }}>
+                  Verified on GitHub Actions Matrix Engine
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                fontSize: 32,
+                fontWeight: 900,
+                color: THEME.emerald,
+                textShadow: `0 0 20px rgba(16, 185, 129, 0.4)`,
+              }}
+            >
+              $0.00 LOCAL HARDWARE COST
+            </div>
+          </div>
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// --- Scene 4: Call to Action Outro (23s–30s / 420 frames) ---
+const SceneFour: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  // Entrance
+  const logoSpring = spring({
+    frame,
+    fps,
+    config: { damping: 12, stiffness: 130 },
+  });
+
+  const headlineSpring = spring({
+    frame: frame - 15,
+    fps,
+    config: { damping: 14, stiffness: 110 },
+  });
+
+  const cliSpring = spring({
+    frame: frame - 35,
+    fps,
+    config: { damping: 13, stiffness: 110 },
+  });
+
+  const badgesSpring = spring({
+    frame: frame - 55,
+    fps,
+    config: { damping: 14, stiffness: 110 },
+  });
+
+  // Animated spinning logo ring
+  const ringRotation = (frame / 60) * 45;
+  const pulse = interpolate(Math.sin((frame / 45) * Math.PI), [-1, 1], [0.96, 1.04]);
+
+  return (
+    <AbsoluteFill
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: "0 120px",
+        fontFamily: THEME.fontFamily,
+      }}
+    >
+      {/* Animated Logo Mark */}
+      <div
+        style={{
+          width: 140,
+          height: 140,
+          position: "relative",
+          marginBottom: 36,
+          transform: `scale(${Math.max(0, logoSpring) * pulse})`,
+          opacity: logoSpring,
+        }}
+      >
+        {/* Outer Rotating Dotted Ring */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            borderRadius: "50%",
+            border: `2px dashed ${THEME.cyanGlow}`,
+            transform: `rotate(${ringRotation}deg)`,
+            boxShadow: `0 0 30px ${THEME.cyan}40`,
+          }}
+        />
+        {/* Inner Glowing Hexagon / Core */}
+        <div
+          style={{
+            position: "absolute",
+            inset: 18,
+            borderRadius: 24,
+            background: `linear-gradient(135deg, ${THEME.cyan} 0%, ${THEME.purple} 100%)`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: `0 0 40px ${THEME.purple}60`,
+          }}
+        >
+          <span style={{ fontSize: 48, fontWeight: 900, color: "#ffffff" }}>▶</span>
+        </div>
+      </div>
+
+      {/* Headline */}
+      <h2
+        style={{
+          fontSize: 78,
+          fontWeight: 900,
+          color: THEME.textPrimary,
+          margin: "0 0 16px 0",
+          textAlign: "center",
+          letterSpacing: -1.5,
+          transform: `translateY(${(1 - headlineSpring) * 30}px)`,
+          opacity: headlineSpring,
+        }}
+      >
+        START PRODUCING IN THE CLOUD
+      </h2>
+
+      <p
+        style={{
+          fontSize: 28,
+          color: THEME.textSecondary,
+          margin: "0 0 38px 0",
+          textAlign: "center",
+          transform: `translateY(${(1 - headlineSpring) * 20}px)`,
+          opacity: headlineSpring,
+        }}
+      >
+        Autonomous Remotion & HyperFrames Studio • 60 FPS Parallel Matrix
+      </p>
+
+      {/* Terminal CLI Pill */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 16,
+          background: "rgba(10, 15, 29, 0.9)",
+          border: `1px solid ${THEME.cyan}60`,
+          borderRadius: 18,
+          padding: "16px 36px",
+          marginBottom: 44,
+          boxShadow: `0 10px 40px rgba(0,0,0,0.6), 0 0 30px rgba(6, 182, 212, 0.25)`,
+          transform: `scale(${Math.max(0, cliSpring)})`,
+          opacity: cliSpring,
+        }}
+      >
+        <span style={{ color: THEME.emerald, fontSize: 24, fontWeight: 800 }}>$</span>
+        <code
+          style={{
+            fontFamily: "monospace",
+            fontSize: 26,
+            fontWeight: 700,
+            color: THEME.textPrimary,
+          }}
+        >
+          git push origin main:render
+        </code>
+        <span
+          style={{
+            color: THEME.textMuted,
+            fontSize: 18,
+            marginLeft: 12,
+            borderLeft: "1px solid rgba(255,255,255,0.15)",
+            paddingLeft: 16,
+          }}
+        >
+          Triggers 20 parallel cloud runners instantly
+        </span>
+      </div>
+
+      {/* Social / Link Badges */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 24,
+          transform: `translateY(${(1 - badgesSpring) * 20}px)`,
+          opacity: badgesSpring,
+        }}
+      >
+        {[
+          { icon: "⚡", label: "github.com/Aryamanxxx/video-gen-studio", color: THEME.cyan },
+          { icon: "🚀", label: "Remotion 4.0 Matrix", color: THEME.purple },
+          { icon: "🛡️", label: "Zero Local Compute Verified", color: THEME.emerald },
+        ].map((badge, idx) => (
+          <div
+            key={idx}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              padding: "10px 20px",
+              borderRadius: 12,
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              fontSize: 18,
+              fontWeight: 600,
+              color: THEME.textSecondary,
+            }}
+          >
+            <span>{badge.icon}</span>
+            <span style={{ color: THEME.textPrimary }}>{badge.label}</span>
+          </div>
+        ))}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// --- Main 30-Second Composition Root (1800 frames @ 60fps) ---
 export const MainVideo: React.FC = () => {
   return (
     <AbsoluteFill style={{ backgroundColor: THEME.bg }}>
+      {/* Persistent Ambient Background */}
       <AmbientBackground />
 
-      <Sequence from={0} durationInFrames={150}>
+      {/* Scene 1: Kinetic Title Hook (0s to 7s -> 0 to 420 frames) */}
+      <Sequence from={0} durationInFrames={420}>
         <SceneOne />
       </Sequence>
 
-      <Sequence from={150} durationInFrames={150}>
+      {/* Scene 2: 3-Point Feature Breakdown (7s to 15s -> 420 to 900 frames) */}
+      <Sequence from={420} durationInFrames={480}>
         <SceneTwo />
       </Sequence>
 
-      <Sequence from={300} durationInFrames={150}>
+      {/* Scene 3: Dynamic Quote & Highlight Metric (15s to 23s -> 900 to 1380 frames) */}
+      <Sequence from={900} durationInFrames={480}>
         <SceneThree />
       </Sequence>
 
-      <Sequence from={450} durationInFrames={150}>
+      {/* Scene 4: Call to Action Outro (23s to 30s -> 1380 to 1800 frames) */}
+      <Sequence from={1380} durationInFrames={420}>
         <SceneFour />
       </Sequence>
     </AbsoluteFill>
