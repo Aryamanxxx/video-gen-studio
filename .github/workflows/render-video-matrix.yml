@@ -80,9 +80,6 @@ jobs:
         with:
           node-version: 22
 
-      - name: Setup FFmpeg
-        uses: FedericoCarboni/setup-ffmpeg@v3
-
       - name: Restore Node Modules
         uses: actions/cache@v4
         id: cache-node-modules
@@ -122,9 +119,6 @@ jobs:
         with:
           node-version: 22
 
-      - name: Setup FFmpeg
-        uses: FedericoCarboni/setup-ffmpeg@v3
-
       - name: Restore Node Modules
         uses: actions/cache@v4
         id: cache-node-modules
@@ -136,7 +130,7 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
 
-      - name: Render Audio (or generate silent track)
+      - name: Render Audio (or skip gracefully)
         run: |
           mkdir -p workflow_output
           if npx remotion render ${{ env.REMOTION_ENTRY_POINT }} ${{ env.REMOTION_COMPOSITION_ID }} workflow_output/audio.mp3 --audio-codec=mp3; then
@@ -179,9 +173,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-
-      - name: Setup FFmpeg
-        uses: FedericoCarboni/setup-ffmpeg@v3
 
       - name: Restore Node Modules
         uses: actions/cache@v4
@@ -231,9 +222,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Setup FFmpeg
-        uses: FedericoCarboni/setup-ffmpeg@v3
 
       - name: Download all chunks
         uses: actions/download-artifact@v4
