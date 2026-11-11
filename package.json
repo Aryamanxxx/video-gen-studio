@@ -11,7 +11,8 @@
     "hf:check": "npx hyperframes check --json",
     "hf:preview": "npx hyperframes preview",
     "skills:list": "npx skills list",
-    "voice": "node scripts/run-voice.mjs"
+    "voice": "node scripts/run-voice.mjs",
+    "art": "node scripts/fetch-ai-art.mjs"
   },
   "dependencies": {
     "@remotion/captions": "^4.0.218",

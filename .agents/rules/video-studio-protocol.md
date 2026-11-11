@@ -88,3 +88,22 @@ These four laws are absolute and permanently active across every session in this
 - Mobile vertical formats for Instagram Reels, YouTube Shorts, and TikTok must default to **1080 × 1920 at 30fps**.
 - 30fps cuts the rendering frame workload in half compared to 60fps, accelerating parallel cloud matrix completion while preserving mobile fluidity.
 - Landscape 16:9 formats (1920 × 1080) remain supported as secondary compositions.
+
+---
+
+### Law 9: Dual-Engine Routing & Fast Iteration
+The studio operates two specialized production engines:
+1. **ENGINE A — Episodic 2D & Stick-Figure Storylines (`src/series/`, ID: `SeriesEpisode`)**:
+   - Route here when the user requests a narrative story, zombie survival episode, character animation, comedy skit, or recurring character series.
+   - Synthesize multi-character voiceovers via `npm run voice` (`scripts/generate-voiceover.py`).
+   - Fetch custom 2D comic backgrounds via `npm run art` (`scripts/fetch-ai-art.mjs` using Pollinations.ai, 0-key).
+   - Animate using `RiggedCharacter` (composable SVG puppet with built-in limb kinematics, actions, expressions, and subtitle-driven phoneme lip-sync), `PropsLibrary` (weapons/items), and `Stage2D` (multi-plane parallax camera).
+   - Build entire episodes declaratively using `episode-manifest.ts` and play via `EpisodePlayer.tsx`.
+2. **ENGINE B — High-Converting Commercial Product Ads (`src/ads/`, ID: `ProductAd`)**:
+   - Route here when the user requests e-commerce product videos, physical goods drops, streetwear showcases, packaging reveals, or SaaS UI launch trailers.
+   - Enforce the 4-part viral ad framework:
+     - `0s–3s`: Pattern-Interrupt Hook (`HookKineticText` with 3-property choreography: `translateY + scale + blur`).
+     - `3s–8s`: Problem Agitation & Comparison.
+     - `8s–15s`: 3D Hero Product Reveal (`ProductHeroCard` with perspective tilt, specular sheen, floating shadow, tactile callout pills).
+     - `15s–20s`: Urgency Offer + CTA Lockup.
+   - Drive scenes through `CameraRig.tsx` using damped springs (`AdTheme.springs`) — 100% banning flat linear slides.

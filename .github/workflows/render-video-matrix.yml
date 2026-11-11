@@ -17,17 +17,17 @@ name: Render Video Matrix (Cloud 60fps)
         type: string
         default: src/index.ts
       remotion_composition_id:
-        description: "Composition ID to render"
+        description: "Composition ID to render (SeriesEpisode | ProductAd | Main)"
         required: true
         type: string
-        default: Main
+        default: SeriesEpisode
 
 permissions:
   contents: write
 
 env:
   REMOTION_ENTRY_POINT: ${{ inputs.remotion_entry_point || 'src/index.ts' }}
-  REMOTION_COMPOSITION_ID: ${{ inputs.remotion_composition_id || 'Main' }}
+  REMOTION_COMPOSITION_ID: ${{ inputs.remotion_composition_id || 'SeriesEpisode' }}
   NUM_OF_WORKERS: ${{ inputs.num_of_workers || 20 }}
 
 jobs:
