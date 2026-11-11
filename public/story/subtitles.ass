@@ -1,0 +1,36 @@
+[Script Info]
+Title: Fast Motion Comic Subtitles
+ScriptType: v4.00+
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+YCbCr Matrix: TV.601
+PlayResX: 1080
+PlayResY: 1920
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Normal,Arial Black,56,&H00FFFFFF,&H000000FF,&H00000000,&H80000000,-1,0,0,0,100,100,1,0,1,4.5,0,2,60,60,340,1
+Style: Active,Arial Black,62,&H0015CCFA,&H000000FF,&H00000000,&H80000000,-1,0,0,0,108,108,1,0,1,5.5,0,2,60,60,340,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.10,0:00:00.53,Normal,,0,0,0,,{\rActive}WAIT{\rNormal} STOP
+Dialogue: 0,0:00:00.73,0:00:01.15,Normal,,0,0,0,,WAIT {\rActive}STOP{\rNormal}
+Dialogue: 0,0:00:01.11,0:00:01.67,Normal,,0,0,0,,{\rActive}MOVING{\rNormal} DID
+Dialogue: 0,0:00:02.48,0:00:02.69,Normal,,0,0,0,,MOVING {\rActive}DID{\rNormal}
+Dialogue: 0,0:00:02.66,0:00:02.81,Normal,,0,0,0,,{\rActive}YOU{\rNormal} HEAR
+Dialogue: 0,0:00:02.77,0:00:03.00,Normal,,0,0,0,,YOU {\rActive}HEAR{\rNormal}
+Dialogue: 0,0:00:02.96,0:00:03.17,Normal,,0,0,0,,{\rActive}THAT{\rNormal} GLASS
+Dialogue: 0,0:00:03.13,0:00:03.48,Normal,,0,0,0,,THAT {\rActive}GLASS{\rNormal}
+Dialogue: 0,0:00:03.45,0:00:04.00,Normal,,0,0,0,,{\rActive}SHATTER{\rNormal} BEHIND
+Dialogue: 0,0:00:04.81,0:00:05.26,Normal,,0,0,0,,SHATTER {\rActive}BEHIND{\rNormal}
+Dialogue: 0,0:00:05.22,0:00:05.33,Normal,,0,0,0,,{\rActive}THE{\rNormal} COUNTER
+Dialogue: 0,0:00:05.29,0:00:05.88,Normal,,0,0,0,,THE {\rActive}COUNTER{\rNormal}
+Dialogue: 0,0:00:06.70,0:00:07.01,Normal,,0,0,0,,{\rActive}TWO{\rNormal} WALKERS
+Dialogue: 0,0:00:06.97,0:00:07.50,Normal,,0,0,0,,TWO {\rActive}WALKERS{\rNormal}
+Dialogue: 0,0:00:07.46,0:00:08.17,Normal,,0,0,0,,{\rActive}INCOMING{\rNormal} HOLD
+Dialogue: 0,0:00:08.98,0:00:09.30,Normal,,0,0,0,,INCOMING {\rActive}HOLD{\rNormal}
+Dialogue: 0,0:00:09.26,0:00:09.41,Normal,,0,0,0,,{\rActive}THE{\rNormal} LINE
+Dialogue: 0,0:00:09.37,0:00:09.81,Normal,,0,0,0,,THE {\rActive}LINE{\rNormal}
+Dialogue: 0,0:00:10.03,0:00:10.48,Normal,,0,0,0,,{\rActive}FIRE{\rNormal} NOW
+Dialogue: 0,0:00:10.44,0:00:10.88,Normal,,0,0,0,,FIRE {\rActive}NOW{\rNormal}

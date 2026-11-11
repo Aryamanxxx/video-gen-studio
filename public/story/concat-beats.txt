@@ -1,0 +1,7 @@
+file 'C:/Users/aryam/OneDrive/Desktop/Video Gen/public/story/beats/beat-01.jpg'
+duration 4.013
+file 'C:/Users/aryam/OneDrive/Desktop/Video Gen/public/story/beats/beat-02.jpg'
+duration 4.013
+file 'C:/Users/aryam/OneDrive/Desktop/Video Gen/public/story/beats/beat-03.jpg'
+duration 4.013
+file 'C:/Users/aryam/OneDrive/Desktop/Video Gen/public/story/beats/beat-03.jpg'

@@ -1,0 +1,36 @@
+{
+  "episodeId": "ep-01-ambush-quicktest",
+  "title": "EPISODE 1: THE GAS STATION AMBUSH",
+  "totalDurationSeconds": 11,
+  "fps": 30,
+  "seed": 924710,
+  "voiceRate": "+8%",
+  "voiceTone": "urgent, breathless survival whisper",
+  "fullScript": "Wait... stop moving! Did you hear that glass shatter? Behind the counter! Two walkers incoming! Hold the line—fire now!",
+  "beats": [
+    {
+      "beatNumber": 1,
+      "durationSeconds": 4.0,
+      "dialogue": "Wait... stop moving! Did you hear that glass shatter?",
+      "prompt": "stickman protagonist in red beanie frozen in shock holding flashlight in dark ruined store aisle, shattered glass on floor, dark shadows, cinematic contrast",
+      "actionType": "stealth",
+      "cameraMove": "zoom_in"
+    },
+    {
+      "beatNumber": 2,
+      "durationSeconds": 4.0,
+      "dialogue": "Behind the counter! Two walkers incoming!",
+      "prompt": "stickman protagonist in red beanie stepping back in shock as two dark shadow infected with glowing yellow eyes lunge over convenience store counter",
+      "actionType": "panic",
+      "cameraMove": "shake"
+    },
+    {
+      "beatNumber": 3,
+      "durationSeconds": 3.0,
+      "dialogue": "Hold the line—fire now!",
+      "prompt": "stickman protagonist in red beanie firing shotgun with fiery bright orange muzzle flash, infected blown backward through broken shelves, dynamic comic action",
+      "actionType": "combat",
+      "cameraMove": "punch_in"
+    }
+  ]
+}

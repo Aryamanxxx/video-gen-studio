@@ -107,3 +107,17 @@ The studio operates two specialized production engines:
      - `8s–15s`: 3D Hero Product Reveal (`ProductHeroCard` with perspective tilt, specular sheen, floating shadow, tactile callout pills).
      - `15s–20s`: Urgency Offer + CTA Lockup.
    - Drive scenes through `CameraRig.tsx` using damped springs (`AdTheme.springs`) — 100% banning flat linear slides.
+
+---
+
+### Law 10: Parallel Subagent Orchestration & 10-Second Direct Compilation
+- Whenever the user asks for a story, stickman episode, or zombie survival video:
+  1. **Orchestrate the 4 Production Subagents** in sequence and parallel:
+     - `showrunner` (`.agents/agents/showrunner/agent.md`): Generates `public/story/episode-plan.json` using the 7 Viral Story Rules and 10–12 rapid beats.
+     - `art-director` (`.agents/agents/art-director/agent.md`): Prepend the locked Character Consistency Bible and batch-fetches all 10–12 beats concurrently in ~8s via `scripts/fetch-story-beats-parallel.mjs`.
+     - `audio-director` (`.agents/agents/audio-director/agent.md`): Synthesizes urgent narration (+8% rate) with `edge-tts` and mixes procedural sub-bass tension drone cues.
+     - `ffmpeg-compiler` (`.agents/agents/ffmpeg-compiler/agent.md`): Bypasses heavy browser sessions and compiles the entire 30s video in ~8 seconds locally using `npm run fast-episode` (`scripts/compile-story-fast.mjs`).
+  2. **Banned Practices**:
+     - NEVER generate raw, hand-coded SVG stick figures unless specifically requested. Always use the Character Bible prefix + parallel `flux` 2D illustrated beats.
+     - NEVER route fast narrative story episodes to the 15-minute GitHub Actions cloud renderer unless explicitly requested by the user. Always use the 10-second local Direct FFmpeg Compiler (`npm run fast-episode`).
+     - Reserve Remotion + GitHub Actions cloud matrix ONLY for Engine B (3D Commercial Product Ads).
