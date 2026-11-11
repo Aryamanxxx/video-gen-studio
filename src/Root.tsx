@@ -11,7 +11,7 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="SeriesEpisode"
         component={EpisodePlayer}
-        durationInFrames={300} // 10 seconds @ 30fps
+        durationInFrames={750} // 25 seconds @ 30fps
         fps={30}
         width={1080}
         height={1920}

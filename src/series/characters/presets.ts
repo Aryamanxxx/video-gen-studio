@@ -50,3 +50,26 @@ export const WalkerZombieStyle: CharacterStyle = {
   bloodStains: true,
   mouthColor: '#450a0a',
 };
+
+export const WalkerZombie2Style: CharacterStyle = {
+  ...WalkerZombieStyle,
+  skinColor: '#3f624d',
+  headRadius: 18,
+  outfitColor: '#1e293b',
+  pantsColor: '#0f172a',
+  eyeColor: '#ef4444', // Blood red eyes
+};
+
+export const BossZombieStyle: CharacterStyle = {
+  skinColor: '#18181b', // Pure shadowy silhouette
+  headRadius: 32,
+  bodyColor: '#09090b',
+  limbColor: '#09090b',
+  strokeWidth: 8,
+  eyeColor: '#ef4444', // Huge piercing red glowing eyes
+  outfitColor: '#09090b',
+  pantsColor: '#09090b',
+  isUndead: true,
+  bloodStains: true,
+  mouthColor: '#450a0a',
+};
