@@ -121,3 +121,19 @@ The studio operates two specialized production engines:
      - NEVER generate raw, hand-coded SVG stick figures unless specifically requested. Always use the Character Bible prefix + parallel `flux` 2D illustrated beats.
      - NEVER route fast narrative story episodes to the 15-minute GitHub Actions cloud renderer unless explicitly requested by the user. Always use the 10-second local Direct FFmpeg Compiler (`npm run fast-episode`).
      - Reserve Remotion + GitHub Actions cloud matrix ONLY for Engine B (3D Commercial Product Ads).
+
+
+---
+
+### Law 11: Zero Pollinations & Mandatory Visual Quality Gate (QC)
+- **Zero Pollinations Policy**:
+  - Pollinations.ai is permanently banned from this repository (due to HTTP 402 paywalls and low-resolution unaligned model degradation).
+  - All visual generation must be executed through high-fidelity cloud models via Hugging Face ZeroGPU Spaces (`gradio_client`) using `HF_TOKEN`:
+    - **Still Frames**: `scripts/cloud-flux-gen.py` via `black-forest-labs/FLUX.1-schnell` (with `multimodalart/FLUX.1-merged` fallback), running at 768x1344 (9:16 vertical), 4 steps, and locked story seeds.
+    - **AI Video Animation**: `scripts/cloud-wan-i2v.py` via `Lightricks/LTX-2.5` or `Saravutw/WAN2.2_I2V_LIGHTNING_4-8step_custom`.
+- **Mandatory Visual QC Gate**:
+  - Before compiling any final video (`outputs/*.mp4`), the agent **MUST** inspect the generated beat images and clips:
+    1. Confirm file size is healthy (> 50 KB for stills, > 200 KB for MP4 clips).
+    2. Confirm aspect ratio and dimensions match 9:16 vertical standards (768x1344 or 1080x1920).
+    3. Verify that the image contents strictly depict the Character Bible (round white stickman head, expressive eyes, thick black ink outlines, crimson red beanie, tactical backpack, dark apocalyptic zombie background) rather than random unrelated pictures.
+  - If any beat fails this inspection, it must be regenerated with an adjusted seed or failover space before proceeding to compilation.
