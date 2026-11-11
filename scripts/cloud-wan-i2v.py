@@ -54,7 +54,7 @@ def animate_image(image_path: str, output_path: str, motion_prompt: str, duratio
                 t0 = time.time()
                 
                 if model_type == "ltx":
-                    res = client.predict(
+                    job = client.submit(
                         prompt=motion_prompt,
                         image_path=handle_file(str(img_file)),
                         height=1344,
@@ -67,9 +67,10 @@ def animate_image(image_path: str, output_path: str, motion_prompt: str, duratio
                         do_enhance=True,
                         api_name="/run"
                     )
+                    res = job.result(timeout=60.0)
                     video_src = res[0]
                 elif model_type == "wan":
-                    res = client.predict(
+                    job = client.submit(
                         input_image=handle_file(str(img_file)),
                         last_image=handle_file(str(img_file)),
                         prompt=motion_prompt,
@@ -88,6 +89,7 @@ def animate_image(image_path: str, output_path: str, motion_prompt: str, duratio
                         video_component=True,
                         api_name="/generate_video"
                     )
+                    res = job.result(timeout=60.0)
                     video_src = res[0]
                 else:
                     continue
