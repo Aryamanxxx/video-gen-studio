@@ -355,6 +355,78 @@
       "skillPath": "skills/reverse-any-video/SKILL.md",
       "computedHash": "1ea16cdc1e852e2f1d07965a96edb5627629ee525f746c5dcf2f8ca1d6aaa55b"
     },
+    "short-drama": {
+      "source": "zenstory-ai/drama-skills",
+      "sourceType": "github",
+      "skillPath": "skills/short-drama/SKILL.md",
+      "computedHash": "e855a6899c5a51a0cc9a3e2544b1419a32851c682978f3e08e8eabd76f1220e7"
+    },
+    "short-drama-assets": {
+      "source": "zenstory-ai/drama-skills",
+      "sourceType": "github",
+      "skillPath": "skills/short-drama-assets/SKILL.md",
+      "computedHash": "2625b7255a24b20edf1a609466d717b41a49eaa901af3ba20ec5a04063c8c96f"
+    },
+    "short-drama-breakdown": {
+      "source": "zenstory-ai/drama-skills",
+      "sourceType": "github",
+      "skillPath": "skills/short-drama-breakdown/SKILL.md",
+      "computedHash": "fdd8dbc5c9931c018b2d4c7fe8d26c1682aff0e58462424aac58ac24a2df2b76"
+    },
+    "short-drama-develop": {
+      "source": "zenstory-ai/drama-skills",
+      "sourceType": "github",
+      "skillPath": "skills/short-drama-develop/SKILL.md",
+      "computedHash": "38c30c0bc6f7731b550ae68a9ab9c5c9c11adee87f33be8a54110a12f762fd99"
+    },
+    "short-drama-edit": {
+      "source": "zenstory-ai/drama-skills",
+      "sourceType": "github",
+      "skillPath": "skills/short-drama-edit/SKILL.md",
+      "computedHash": "66e719b7bda73a71cae901c48c8fc44754dbe038d2b4705aac7f0ec4ca780045"
+    },
+    "short-drama-image-prompts": {
+      "source": "zenstory-ai/drama-skills",
+      "sourceType": "github",
+      "skillPath": "skills/short-drama-image-prompts/SKILL.md",
+      "computedHash": "3f855de3cdbe37a2ce528f96453525b3cc563768c26fdc91dd6bfb09602f7927"
+    },
+    "short-drama-novel-analyze": {
+      "source": "zenstory-ai/drama-skills",
+      "sourceType": "github",
+      "skillPath": "skills/short-drama-novel-analyze/SKILL.md",
+      "computedHash": "80e8e25d0d924ccc9c18ec0960c70d98f6a3fd7c1b28b5f0984253d8da70bad4"
+    },
+    "short-drama-produce": {
+      "source": "zenstory-ai/drama-skills",
+      "sourceType": "github",
+      "skillPath": "skills/short-drama-produce/SKILL.md",
+      "computedHash": "bae53a19140de252749a7b9ed87117ec9b6b8974b0b01a2611356c8597d56c2b"
+    },
+    "short-drama-review": {
+      "source": "zenstory-ai/drama-skills",
+      "sourceType": "github",
+      "skillPath": "skills/short-drama-review/SKILL.md",
+      "computedHash": "9a40ae269b17be8b217557412bc478e1dc0aec697b189c0090acd9959d6c6a34"
+    },
+    "short-drama-storyboard": {
+      "source": "zenstory-ai/drama-skills",
+      "sourceType": "github",
+      "skillPath": "skills/short-drama-storyboard/SKILL.md",
+      "computedHash": "b6d1e374cf1a90d633310a0e9536b654e35447a74218f9e89b1d72a30f89a445"
+    },
+    "short-drama-video-prompts": {
+      "source": "zenstory-ai/drama-skills",
+      "sourceType": "github",
+      "skillPath": "skills/short-drama-video-prompts/SKILL.md",
+      "computedHash": "cd9c571f1ec84cb9af17e2357eac2bd0b14a0db22a85d79a50107fd924c80c81"
+    },
+    "short-drama-write": {
+      "source": "zenstory-ai/drama-skills",
+      "sourceType": "github",
+      "skillPath": "skills/short-drama-write/SKILL.md",
+      "computedHash": "ffb3b713a58955b4d27d62540f90ea018b1590d6e85766c8b4f2b00a738e370d"
+    },
     "short-form-ffmpeg-cookbook": {
       "source": "vargHQ/skills",
       "sourceType": "github",

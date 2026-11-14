@@ -2,7 +2,7 @@
 """
 scripts/cloud-flux-gen.py
 Autonomous High-Fidelity FLUX.1 Cloud Generator via Hugging Face ZeroGPU Spaces.
-Eliminates Pollinations.ai completely. Enforces Character Consistency Bible and 9:16 vertical resolution.
+Enforces Character Consistency Bible, 8-Section Prompt SOP, and First-Last-Frame generation.
 """
 
 import os
@@ -16,7 +16,7 @@ from gradio_client import Client
 
 # Character Consistency Bible (Locked Visual Identity)
 CHARACTER_BIBLE_PREFIX = (
-    "2D flat vector stickman survival animation style, Beanie Survives aesthetic, "
+    "2D flat vector stickman survival animation style, Beanie Survives and Stickocalypse aesthetic, "
     "clean round white stickman head with expressive cartoon eyes, thick black ink outlines, "
     "protagonist wearing a crimson red knit beanie and dark tactical backpack, gritty dark atmospheric "
     "2D comic background, dramatic rim lighting, high contrast, no text in image -- "
@@ -45,11 +45,15 @@ def load_hf_token() -> str:
 def generate_image(prompt: str, output_path: str, seed: int = 924710, width: int = 768, height: int = 1344, steps: int = 4):
     token = load_hf_token()
     
-    # Ensure full, untruncated prompt
-    full_prompt = prompt if prompt.startswith("2D flat vector") else f"{CHARACTER_BIBLE_PREFIX}{prompt}"
-    print(f"\n[Flux-Cloud] Generating beat: {Path(output_path).name}")
-    print(f"[Flux-Cloud] Target Dimensions: {width}x{height} | Seed: {seed} | Steps: {steps}")
-    print(f"[Flux-Cloud] Full Prompt: {full_prompt[:120]}... (total {len(full_prompt)} chars)")
+    # Prefix prompt if not already formatted with custom art style
+    if prompt.startswith("2D flat vector") or prompt.startswith("2D vector character"):
+        full_prompt = prompt
+    else:
+        full_prompt = f"{CHARACTER_BIBLE_PREFIX}{prompt}"
+        
+    print(f"\n[Flux-Cloud] Generating: {Path(output_path).name}")
+    print(f"[Flux-Cloud] Dimensions: {width}x{height} | Seed: {seed} | Steps: {steps}")
+    print(f"[Flux-Cloud] Prompt: {full_prompt[:120]}... (total {len(full_prompt)} chars)")
     
     last_err = None
     for space_target, model_type in PRIORITY_SPACES:
@@ -101,6 +105,29 @@ def generate_image(prompt: str, output_path: str, seed: int = 924710, width: int
     
     raise RuntimeError(f"All FLUX.1 Spaces failed! Last error: {last_err}")
 
+def generate_character_sheet(output_path: str = "public/story/characters/protagonist-sheet.jpg", seed: int = 924710):
+    """
+    8-Section Prompt SOP for 3-View Orthographic Turnaround Sheet:
+    1. Core Subject: Stickman survivor protagonist
+    2. Stable Anchor: Clean round white head, expressive eyes, crisp black ink outlines
+    3. Outfit: Crimson red knit beanie, dark charcoal tactical jacket, olive backpack with straps, combat boots
+    4. Composition: 3-view orthographic turnaround sheet (front, side 90-degree profile, rear back view)
+    5. Medium/Material: 2D vector comic illustration, cell shaded, crisp clean line art
+    6. Lighting: Neutral even studio key lighting, balanced rim light
+    7. Background: Neutral light grey background, single ground reference line, empty stage
+    8. Negative: no 3D render, no photo, no text, no watermark, no extra figures
+    """
+    prompt = (
+        "2D vector character design model sheet, 3-view orthographic turnaround sheet showing front view, "
+        "side profile view, and back view of stickman protagonist aligned side by side, clean round white stickman head "
+        "with determined cartoon eyes, wearing bright crimson red knit beanie hat, dark charcoal survival jacket, "
+        "tactical olive green backpack with webbing straps, fingerless black gloves, sturdy combat boots, "
+        "full body head to toe, clean neutral grey background, crisp black ink line art, studio reference lighting, "
+        "no text, no watermark, cell shading"
+    )
+    # 1344x768 landscape for 3-view turnaround sheet
+    generate_image(prompt=prompt, output_path=output_path, seed=seed, width=1344, height=768, steps=4)
+
 def generate_all_from_plan(plan_path: str = "public/story/episode-plan.json", force: bool = False):
     plan_file = Path(plan_path).resolve()
     if not plan_file.exists():
@@ -122,6 +149,7 @@ def generate_all_from_plan(plan_path: str = "public/story/episode-plan.json", fo
         pad_num = f"{beat_num:02d}"
         out_jpg = beats_dir / f"beat-{pad_num}.jpg"
         
+        # Check if already valid
         if out_jpg.exists() and not force:
             try:
                 with Image.open(out_jpg) as img_check:
@@ -135,22 +163,43 @@ def generate_all_from_plan(plan_path: str = "public/story/episode-plan.json", fo
         prompt = b["prompt"]
         generate_image(prompt=prompt, output_path=str(out_jpg), seed=seed, width=768, height=1344, steps=4)
         success_count += 1
+
+        # Check if high-action shot requires start and end frames for First-Last-Frame interpolation
+        is_action = b.get("isActionShot", False) or b.get("actionType") in ["run", "breach", "barricade", "fall", "collapse", "escape"]
+        if is_action:
+            start_jpg = beats_dir / f"frame-{pad_num}-start.jpg"
+            end_jpg = beats_dir / f"frame-{pad_num}-end.jpg"
+            
+            if not start_jpg.exists() or force:
+                start_prompt = b.get("startPrompt", f"{prompt}, initial anticipation position, tension build")
+                generate_image(prompt=start_prompt, output_path=str(start_jpg), seed=seed, width=768, height=1344, steps=4)
+            
+            if not end_jpg.exists() or force:
+                end_prompt = b.get("endPrompt", f"{prompt}, dramatic dynamic follow-through motion, full kinetic action")
+                generate_image(prompt=end_prompt, output_path=str(end_jpg), seed=seed + 1, width=768, height=1344, steps=4)
     
     print(f"\n[Flux-Cloud] All {success_count}/{len(beats)} beats generated successfully!")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Cloud FLUX.1 Story Beat Generator")
+    parser = argparse.ArgumentParser(description="Cloud FLUX.1 Story Beat & Character Generator")
     parser.add_argument("--prompt", type=str, help="Custom prompt for single beat")
     parser.add_argument("--output", type=str, help="Output file path (e.g. public/story/beats/beat-01.jpg)")
     parser.add_argument("--seed", type=int, default=924710, help="Fixed generation seed for consistency")
+    parser.add_argument("--width", type=int, default=768, help="Target image width")
+    parser.add_argument("--height", type=int, default=1344, help="Target image height")
+    parser.add_argument("--steps", type=int, default=4, help="Inference steps")
     parser.add_argument("--plan", type=str, default="public/story/episode-plan.json", help="Path to episode-plan.json")
     parser.add_argument("--all", action="store_true", help="Generate all beats from episode plan")
+    parser.add_argument("--sheet", action="store_true", help="Generate 3-view orthographic character sheet")
     parser.add_argument("--force", action="store_true", help="Overwrite existing beat images")
     args = parser.parse_args()
     
-    if args.all or (not args.prompt and not args.output):
+    if args.sheet:
+        out_sheet = args.output or "public/story/characters/protagonist-sheet.jpg"
+        generate_character_sheet(output_path=out_sheet, seed=args.seed)
+    elif args.all or (not args.prompt and not args.output):
         generate_all_from_plan(args.plan, force=args.force)
     else:
         if not args.prompt or not args.output:
-            parser.error("--prompt and --output required when not using --all")
-        generate_image(prompt=args.prompt, output_path=args.output, seed=args.seed)
+            parser.error("--prompt and --output required when not using --all or --sheet")
+        generate_image(prompt=args.prompt, output_path=args.output, seed=args.seed, width=args.width, height=args.height, steps=args.steps)

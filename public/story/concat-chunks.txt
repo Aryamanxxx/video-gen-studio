@@ -1,3 +1,8 @@
 file 'C:/Users/aryam/OneDrive/Desktop/Video Gen/public/story/chunks/chunk-01.mp4'
 file 'C:/Users/aryam/OneDrive/Desktop/Video Gen/public/story/chunks/chunk-02.mp4'
 file 'C:/Users/aryam/OneDrive/Desktop/Video Gen/public/story/chunks/chunk-03.mp4'
+file 'C:/Users/aryam/OneDrive/Desktop/Video Gen/public/story/chunks/chunk-04.mp4'
+file 'C:/Users/aryam/OneDrive/Desktop/Video Gen/public/story/chunks/chunk-05.mp4'
+file 'C:/Users/aryam/OneDrive/Desktop/Video Gen/public/story/chunks/chunk-06.mp4'
+file 'C:/Users/aryam/OneDrive/Desktop/Video Gen/public/story/chunks/chunk-07.mp4'
+file 'C:/Users/aryam/OneDrive/Desktop/Video Gen/public/story/chunks/chunk-08.mp4'

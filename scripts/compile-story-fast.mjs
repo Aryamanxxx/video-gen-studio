@@ -36,7 +36,7 @@ function formatAssTime(seconds) {
 // 3. Build ASS Karaoke Subtitles (Bold Yellow Active Pop)
 function generateAssSubtitles(subtitles, outputPath) {
   const header = `[Script Info]
-Title: Fast Hybrid Motion Comic Subtitles
+Title: Fast Multi-Angle Cinema Subtitles
 ScriptType: v4.00+
 WrapStyle: 0
 ScaledBorderAndShadow: yes
@@ -63,9 +63,6 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
   for (let i = 0; i < subtitles.length; i += wordsPerChunk) {
     const chunk = subtitles.slice(i, i + wordsPerChunk);
-    const chunkStart = chunk[0].start;
-    const chunkEnd = chunk[chunk.length - 1].end + 0.15;
-
     for (let j = 0; j < chunk.length; j++) {
       const activeWord = chunk[j];
       const startT = formatAssTime(activeWord.start);
@@ -99,6 +96,7 @@ function runFFmpeg(cmd, args) {
   });
 }
 
+// 4. Render each beat chunk with 0.15s punchy cut transitions
 async function renderBeatChunk(ffmpegBin, beatNumber, beat, duration, chunkOut) {
   const padNum = String(beatNumber).padStart(2, '0');
   const clipFile = path.join(rootDir, 'public', 'story', 'clips', `clip-${padNum}.mp4`);
@@ -108,18 +106,27 @@ async function renderBeatChunk(ffmpegBin, beatNumber, beat, duration, chunkOut) 
   if (!fs.existsSync(clipFile) || fs.statSync(clipFile).size < 20000) {
     throw new Error(
       `[FFmpeg-Compiler] ❌ VIOLATION OF LAW 12: Beat #${beatNumber} is missing real animated video clip "${path.basename(clipFile)}"! ` +
-      `Static images and zoompan slideshows are permanently banned. Every beat must be a real frame-by-frame animated .mp4 video clip. ` +
-      `Run "python scripts/generate-all-video-clips.py" to generate video clips before compiling.`
+      `Static images and zoompan slideshows are permanently banned. Every beat must be a real frame-by-frame animated .mp4 video clip.`
     );
   }
 
-  console.log(`[FFmpeg-Compiler] 🎬 Beat #${beatNumber}: Using Real AI-Animated Video Clip (${path.basename(clipFile)})`);
+  console.log(`[FFmpeg-Compiler] 🎬 Beat #${beatNumber}: Real AI-Animated Video (${path.basename(clipFile)})`);
+  
+  // 0.15s punchy cut transition: contrast pop and subtle flash at the head of every angle
+  const filterGraph = [
+    'scale=1080:1920:force_original_aspect_ratio=increase',
+    'crop=1080:1920',
+    `eq=contrast='if(lt(t,0.15),1.20,1.0)':brightness='if(lt(t,0.15),0.04,0.0)'`,
+    'vignette=PI/5',
+    'format=yuv420p'
+  ].join(',');
+
   const args = [
     '-y',
     '-stream_loop', '-1',
     '-i', clipFile,
     '-t', durStr,
-    '-vf', 'scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,vignette=PI/5,format=yuv420p',
+    '-vf', filterGraph,
     '-c:v', 'libx264',
     '-preset', 'ultrafast',
     '-crf', '19',
@@ -147,8 +154,8 @@ async function main() {
   if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
   const finalOutput = path.join(outputDir, 'latest-episode.mp4');
+  const stickocalypseOutput = path.join(outputDir, 'stickocalypse-ep1.mp4');
   const cloudEpisodeOutput = path.join(outputDir, 'real-cloud-episode.mp4');
-  const storyEpisodeOutput = path.join(outputDir, 'story-episode.mp4');
   const allVideoOutput = path.join(outputDir, 'all-video-episode.mp4');
 
   // 1. Audio validation & total duration
@@ -162,28 +169,38 @@ async function main() {
     subtitles = JSON.parse(fs.readFileSync(subJsonPath, 'utf-8'));
   }
   const totalAudioDuration =
-    subtitles.length > 0 ? subtitles[subtitles.length - 1].end + 1.2 : 25;
+    subtitles.length > 0 ? subtitles[subtitles.length - 1].end + 1.2 : 24.5;
+  const durStr = totalAudioDuration.toFixed(2);
 
   // 2. Generate ASS karaoke subtitles
   generateAssSubtitles(subtitles, assSubPath);
 
-  // 3. Load episode plan beats
-  let plan = { beats: [] };
-  if (fs.existsSync(planPath)) {
-    plan = JSON.parse(fs.readFileSync(planPath, 'utf-8'));
+  // 3. Load & Validate Episode Plan (Minimum 8 Distinct Shots Requirement)
+  if (!fs.existsSync(planPath)) {
+    throw new Error(`[FFmpeg-Compiler] ❌ Episode plan not found at ${planPath}!`);
   }
-  if (!plan.beats || plan.beats.length === 0) {
-    plan.beats = [
-      { beatNumber: 1, durationSeconds: 4.0, cameraMove: 'zoom_in' },
-      { beatNumber: 2, durationSeconds: 4.0, cameraMove: 'shake' },
-      { beatNumber: 3, durationSeconds: 3.0, cameraMove: 'punch_in' },
-    ];
+  const plan = JSON.parse(fs.readFileSync(planPath, 'utf-8'));
+  const numBeats = plan.beats ? plan.beats.length : 0;
+
+  if (numBeats < 8) {
+    throw new Error(
+      `[FFmpeg-Compiler] ❌ VIOLATION OF RETENTION STANDARD: Episode has only ${numBeats} beats! ` +
+      `Short-drama cinematic standards require a minimum of 8 distinct shots (2.5-3.0s each) with zero repetition.`
+    );
   }
 
-  const numBeats = plan.beats.length;
-  console.log(`[FFmpeg-Compiler] Processing ${numBeats} hybrid beats (Total duration: ${totalAudioDuration.toFixed(1)}s)...`);
+  // Check that all clips are distinct (no duplicates)
+  const clipPaths = plan.beats.map((b) =>
+    path.join(rootDir, 'public', 'story', 'clips', `clip-${String(b.beatNumber).padStart(2, '0')}.mp4`)
+  );
+  const uniqueClips = new Set(clipPaths);
+  if (uniqueClips.size !== clipPaths.length) {
+    throw new Error(`[FFmpeg-Compiler] ❌ VIOLATION: Duplicate clips detected! Every scene must have a distinct .mp4 clip.`);
+  }
 
-  // Distribute duration
+  console.log(`[FFmpeg-Compiler] Processing ${numBeats} distinct cinema shots (Total duration: ${durStr}s)...`);
+
+  // Distribute duration per beat
   const durationPerBeat = totalAudioDuration / numBeats;
   const chunkFiles = [];
 
@@ -204,7 +221,7 @@ async function main() {
     .join('\n');
   fs.writeFileSync(concatListPath, concatContent + '\n');
 
-  // 5. Final Concat + Audio Mix + ASS Subtitle Burn
+  // 5. Multi-Layer Procedural SFX Audio Synthesis + Subtitle Burn
   const escapedAssPath = assSubPath.replace(/\\/g, '/').replace(/:/g, '\\:');
 
   const videoFilter = [
@@ -212,11 +229,15 @@ async function main() {
     'format=yuv420p',
   ].join(',');
 
-  // Procedural tension audio (55Hz sub-bass + voiceover)
+  // Multi-layer procedural audio cues:
+  // Layer 1: voiceover [1:a]
+  // Layer 2: 45Hz heartbeat pulse (rhythmic survival anxiety)
+  // Layer 3: 52Hz sub-bass drone drop (building tension)
   const audioFilter = [
-    `[1:a]volume=1.0[v]`,
-    `aevalsrc=0.08*sin(2*PI*55*t):d=${totalAudioDuration}[drone]`,
-    `[v][drone]amix=inputs=2:duration=first:dropout_transition=1.5[aout]`,
+    `[1:a]volume=1.0[voice]`,
+    `aevalsrc='0.09*sin(2*PI*50*t)':d=${durStr}[subbass]`,
+    `aevalsrc='0.11*sin(2*PI*45*t)*abs(sin(2*PI*1.2*t))':d=${durStr}[heartbeat]`,
+    `[voice][subbass][heartbeat]amix=inputs=3:duration=first:dropout_transition=1.5[aout]`,
   ].join(';');
 
   const ffmpegArgs = [
@@ -235,26 +256,26 @@ async function main() {
     '-c:a', 'aac',
     '-b:a', '192k',
     '-r', '30',
-    '-t', totalAudioDuration.toString(),
+    '-t', durStr,
     finalOutput,
   ];
 
-  console.log(`[FFmpeg-Compiler] Stitching chunks and burning subtitles...`);
+  console.log(`[FFmpeg-Compiler] Stitching ${numBeats} cinema shots with multi-layer procedural SFX and subtitles...`);
   await runFFmpeg(ffmpegBin, ffmpegArgs);
 
   // Copy to destination files
+  fs.copyFileSync(finalOutput, stickocalypseOutput);
   fs.copyFileSync(finalOutput, cloudEpisodeOutput);
-  fs.copyFileSync(finalOutput, storyEpisodeOutput);
   fs.copyFileSync(finalOutput, allVideoOutput);
 
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
   const stat = fs.statSync(finalOutput);
   console.log(`\n======================================================`);
   console.log(`[FFmpeg-Compiler] 🚀 COMPILED IN ${elapsed}s!`);
-  console.log(`[FFmpeg-Compiler] Output: ${finalOutput} (${(stat.size / 1024 / 1024).toFixed(2)} MB)`);
-  console.log(`[FFmpeg-Compiler] Output: ${cloudEpisodeOutput}`);
-  console.log(`[FFmpeg-Compiler] Output: ${storyEpisodeOutput}`);
-  console.log(`[FFmpeg-Compiler] Output: ${allVideoOutput}`);
+  console.log(`[FFmpeg-Compiler] Primary Output: ${finalOutput} (${(stat.size / 1024 / 1024).toFixed(2)} MB)`);
+  console.log(`[FFmpeg-Compiler] Episode Output: ${stickocalypseOutput}`);
+  console.log(`[FFmpeg-Compiler] Cloud Output: ${cloudEpisodeOutput}`);
+  console.log(`[FFmpeg-Compiler] All-Video Output: ${allVideoOutput}`);
   console.log(`======================================================\n`);
 }
 

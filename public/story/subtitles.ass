@@ -1,5 +1,5 @@
 [Script Info]
-Title: Fast Hybrid Motion Comic Subtitles
+Title: Fast Multi-Angle Cinema Subtitles
 ScriptType: v4.00+
 WrapStyle: 0
 ScaledBorderAndShadow: yes
@@ -14,23 +14,99 @@ Style: Active,Arial Black,64,&H0015CCFA,&H000000FF,&H00000000,&H80000000,-1,0,0,
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 0,0:00:00.10,0:00:00.53,Normal,,0,0,0,,{\rActive}WAIT{\rNormal} STOP
-Dialogue: 0,0:00:00.73,0:00:01.15,Normal,,0,0,0,,WAIT {\rActive}STOP{\rNormal}
-Dialogue: 0,0:00:01.11,0:00:01.67,Normal,,0,0,0,,{\rActive}MOVING{\rNormal} DID
-Dialogue: 0,0:00:02.48,0:00:02.69,Normal,,0,0,0,,MOVING {\rActive}DID{\rNormal}
-Dialogue: 0,0:00:02.66,0:00:02.81,Normal,,0,0,0,,{\rActive}YOU{\rNormal} HEAR
-Dialogue: 0,0:00:02.77,0:00:03.00,Normal,,0,0,0,,YOU {\rActive}HEAR{\rNormal}
-Dialogue: 0,0:00:02.96,0:00:03.17,Normal,,0,0,0,,{\rActive}THAT{\rNormal} GLASS
-Dialogue: 0,0:00:03.13,0:00:03.48,Normal,,0,0,0,,THAT {\rActive}GLASS{\rNormal}
-Dialogue: 0,0:00:03.45,0:00:04.00,Normal,,0,0,0,,{\rActive}SHATTER{\rNormal} BEHIND
-Dialogue: 0,0:00:04.81,0:00:05.26,Normal,,0,0,0,,SHATTER {\rActive}BEHIND{\rNormal}
-Dialogue: 0,0:00:05.22,0:00:05.33,Normal,,0,0,0,,{\rActive}THE{\rNormal} COUNTER
-Dialogue: 0,0:00:05.29,0:00:05.88,Normal,,0,0,0,,THE {\rActive}COUNTER{\rNormal}
-Dialogue: 0,0:00:06.70,0:00:07.01,Normal,,0,0,0,,{\rActive}TWO{\rNormal} WALKERS
-Dialogue: 0,0:00:06.97,0:00:07.50,Normal,,0,0,0,,TWO {\rActive}WALKERS{\rNormal}
-Dialogue: 0,0:00:07.46,0:00:08.17,Normal,,0,0,0,,{\rActive}INCOMING{\rNormal} HOLD
-Dialogue: 0,0:00:08.98,0:00:09.30,Normal,,0,0,0,,INCOMING {\rActive}HOLD{\rNormal}
-Dialogue: 0,0:00:09.26,0:00:09.41,Normal,,0,0,0,,{\rActive}THE{\rNormal} LINE
-Dialogue: 0,0:00:09.37,0:00:09.81,Normal,,0,0,0,,THE {\rActive}LINE{\rNormal}
-Dialogue: 0,0:00:10.03,0:00:10.48,Normal,,0,0,0,,{\rActive}FIRE{\rNormal} NOW
-Dialogue: 0,0:00:10.44,0:00:10.88,Normal,,0,0,0,,FIRE {\rActive}NOW{\rNormal}
+Dialogue: 0,0:00:00.09,0:00:00.44,Normal,,0,0,0,,{\rActive}RULE{\rNormal} 14
+Dialogue: 0,0:00:00.40,0:00:01.04,Normal,,0,0,0,,RULE {\rActive}14{\rNormal}
+Dialogue: 0,0:00:01.28,0:00:01.62,Normal,,0,0,0,,{\rActive}NEVER{\rNormal} GRAB
+Dialogue: 0,0:00:01.58,0:00:01.97,Normal,,0,0,0,,NEVER {\rActive}GRAB{\rNormal}
+Dialogue: 0,0:00:01.93,0:00:02.30,Normal,,0,0,0,,{\rActive}CANNED{\rNormal} FOOD
+Dialogue: 0,0:00:02.26,0:00:02.62,Normal,,0,0,0,,CANNED {\rActive}FOOD{\rNormal}
+Dialogue: 0,0:00:02.58,0:00:02.75,Normal,,0,0,0,,{\rActive}FROM{\rNormal} THE
+Dialogue: 0,0:00:02.71,0:00:02.83,Normal,,0,0,0,,FROM {\rActive}THE{\rNormal}
+Dialogue: 0,0:00:02.79,0:00:03.16,Normal,,0,0,0,,{\rActive}BOTTOM{\rNormal} SHELF
+Dialogue: 0,0:00:03.12,0:00:03.59,Normal,,0,0,0,,BOTTOM {\rActive}SHELF{\rNormal}
+Dialogue: 0,0:00:03.55,0:00:03.83,Normal,,0,0,0,,{\rActive}DURING{\rNormal} AN
+Dialogue: 0,0:00:03.79,0:00:03.93,Normal,,0,0,0,,DURING {\rActive}AN{\rNormal}
+Dialogue: 0,0:00:03.89,0:00:04.52,Normal,,0,0,0,,{\rActive}OUTBREAK{\rNormal} AT
+Dialogue: 0,0:00:05.28,0:00:05.50,Normal,,0,0,0,,OUTBREAK {\rActive}AT{\rNormal}
+Dialogue: 0,0:00:05.47,0:00:06.39,Normal,,0,0,0,,{\rActive}48 HOURS{\rNormal} POST-INFECTION
+Dialogue: 0,0:00:06.35,0:00:07.25,Normal,,0,0,0,,48 HOURS {\rActive}POST-INFECTION{\rNormal}
+Dialogue: 0,0:00:07.41,0:00:08.16,Normal,,0,0,0,,{\rActive}CONDENSATION{\rNormal} DEGRADES
+Dialogue: 0,0:00:08.12,0:00:08.58,Normal,,0,0,0,,CONDENSATION {\rActive}DEGRADES{\rNormal}
+Dialogue: 0,0:00:08.55,0:00:08.94,Normal,,0,0,0,,{\rActive}BOTTOM{\rNormal} TIN
+Dialogue: 0,0:00:08.90,0:00:09.20,Normal,,0,0,0,,BOTTOM {\rActive}TIN{\rNormal}
+Dialogue: 0,0:00:09.16,0:00:09.56,Normal,,0,0,0,,{\rActive}SEALS{\rNormal} BY
+Dialogue: 0,0:00:09.52,0:00:09.76,Normal,,0,0,0,,SEALS {\rActive}BY{\rNormal}
+Dialogue: 0,0:00:09.72,0:00:10.58,Normal,,0,0,0,,{\rActive}80%{\rNormal} ANAEROBIC
+Dialogue: 0,0:00:11.34,0:00:11.97,Normal,,0,0,0,,80% {\rActive}ANAEROBIC{\rNormal}
+Dialogue: 0,0:00:11.93,0:00:12.32,Normal,,0,0,0,,{\rActive}SPORES{\rNormal} INCUBATE
+Dialogue: 0,0:00:12.28,0:00:12.83,Normal,,0,0,0,,SPORES {\rActive}INCUBATE{\rNormal}
+Dialogue: 0,0:00:12.79,0:00:13.35,Normal,,0,0,0,,{\rActive}INSIDE{\rNormal} TURNING
+Dialogue: 0,0:00:13.56,0:00:13.89,Normal,,0,0,0,,INSIDE {\rActive}TURNING{\rNormal}
+Dialogue: 0,0:00:13.85,0:00:14.41,Normal,,0,0,0,,{\rActive}CONTENTS{\rNormal} INTO
+Dialogue: 0,0:00:14.37,0:00:14.67,Normal,,0,0,0,,CONTENTS {\rActive}INTO{\rNormal}
+Dialogue: 0,0:00:14.63,0:00:15.05,Normal,,0,0,0,,{\rActive}LETHAL{\rNormal} NEUROTOXIN
+Dialogue: 0,0:00:15.01,0:00:15.82,Normal,,0,0,0,,LETHAL {\rActive}NEUROTOXIN{\rNormal}
+Dialogue: 0,0:00:16.59,0:00:16.76,Normal,,0,0,0,,{\rActive}I{\rNormal} NEEDED
+Dialogue: 0,0:00:16.72,0:00:17.12,Normal,,0,0,0,,I {\rActive}NEEDED{\rNormal}
+Dialogue: 0,0:00:17.08,0:00:17.73,Normal,,0,0,0,,{\rActive}CALORIES{\rNormal} BUT
+Dialogue: 0,0:00:17.88,0:00:18.08,Normal,,0,0,0,,CALORIES {\rActive}BUT{\rNormal}
+Dialogue: 0,0:00:18.04,0:00:18.60,Normal,,0,0,0,,{\rActive}ADRENALINE{\rNormal} MADE
+Dialogue: 0,0:00:18.56,0:00:18.78,Normal,,0,0,0,,ADRENALINE {\rActive}MADE{\rNormal}
+Dialogue: 0,0:00:18.75,0:00:18.90,Normal,,0,0,0,,{\rActive}MY{\rNormal} TREMBLING
+Dialogue: 0,0:00:18.86,0:00:19.43,Normal,,0,0,0,,MY {\rActive}TREMBLING{\rNormal}
+Dialogue: 0,0:00:19.39,0:00:19.74,Normal,,0,0,0,,{\rActive}ELBOW{\rNormal} CLIP
+Dialogue: 0,0:00:19.70,0:00:20.00,Normal,,0,0,0,,ELBOW {\rActive}CLIP{\rNormal}
+Dialogue: 0,0:00:19.96,0:00:20.07,Normal,,0,0,0,,{\rActive}A{\rNormal} DISPLAY
+Dialogue: 0,0:00:20.03,0:00:20.47,Normal,,0,0,0,,A {\rActive}DISPLAY{\rNormal}
+Dialogue: 0,0:00:20.43,0:00:20.93,Normal,,0,0,0,,{\rActive}RACK{\rNormal} EIGHTY
+Dialogue: 0,0:00:21.69,0:00:22.01,Normal,,0,0,0,,RACK {\rActive}EIGHTY{\rNormal}
+Dialogue: 0,0:00:21.98,0:00:22.65,Normal,,0,0,0,,{\rActive}DECIBELS{\rNormal} ECHOED
+Dialogue: 0,0:00:22.61,0:00:23.03,Normal,,0,0,0,,DECIBELS {\rActive}ECHOED{\rNormal}
+Dialogue: 0,0:00:22.99,0:00:23.21,Normal,,0,0,0,,{\rActive}THROUGH{\rNormal} THE
+Dialogue: 0,0:00:23.17,0:00:23.32,Normal,,0,0,0,,THROUGH {\rActive}THE{\rNormal}
+Dialogue: 0,0:00:23.28,0:00:23.91,Normal,,0,0,0,,{\rActive}AISLES{\rNormal} DISTANCE
+Dialogue: 0,0:00:24.68,0:00:25.17,Normal,,0,0,0,,AISLES {\rActive}DISTANCE{\rNormal}
+Dialogue: 0,0:00:25.14,0:00:25.28,Normal,,0,0,0,,{\rActive}TO{\rNormal} EXIT
+Dialogue: 0,0:00:25.24,0:00:25.72,Normal,,0,0,0,,TO {\rActive}EXIT{\rNormal}
+Dialogue: 0,0:00:25.95,0:00:26.51,Normal,,0,0,0,,{\rActive}14{\rNormal} METERS
+Dialogue: 0,0:00:26.47,0:00:27.04,Normal,,0,0,0,,14 {\rActive}METERS{\rNormal}
+Dialogue: 0,0:00:27.80,0:00:28.18,Normal,,0,0,0,,{\rActive}THREE{\rNormal} BLIND
+Dialogue: 0,0:00:28.14,0:00:28.56,Normal,,0,0,0,,THREE {\rActive}BLIND{\rNormal}
+Dialogue: 0,0:00:28.52,0:00:29.02,Normal,,0,0,0,,{\rActive}SPRINTERS{\rNormal} BREACHED
+Dialogue: 0,0:00:28.98,0:00:29.41,Normal,,0,0,0,,SPRINTERS {\rActive}BREACHED{\rNormal}
+Dialogue: 0,0:00:29.37,0:00:29.67,Normal,,0,0,0,,{\rActive}AISLE{\rNormal} FOUR
+Dialogue: 0,0:00:29.63,0:00:30.03,Normal,,0,0,0,,AISLE {\rActive}FOUR{\rNormal}
+Dialogue: 0,0:00:30.21,0:00:30.54,Normal,,0,0,0,,{\rActive}HUNTING{\rNormal} THE
+Dialogue: 0,0:00:30.50,0:00:30.61,Normal,,0,0,0,,HUNTING {\rActive}THE{\rNormal}
+Dialogue: 0,0:00:30.57,0:00:31.07,Normal,,0,0,0,,{\rActive}METALLIC{\rNormal} SOUND
+Dialogue: 0,0:00:31.03,0:00:31.60,Normal,,0,0,0,,METALLIC {\rActive}SOUND{\rNormal}
+Dialogue: 0,0:00:32.36,0:00:32.58,Normal,,0,0,0,,{\rActive}I{\rNormal} HURLED
+Dialogue: 0,0:00:32.54,0:00:32.87,Normal,,0,0,0,,I {\rActive}HURLED{\rNormal}
+Dialogue: 0,0:00:32.84,0:00:32.91,Normal,,0,0,0,,{\rActive}A{\rNormal} RED
+Dialogue: 0,0:00:32.87,0:00:33.18,Normal,,0,0,0,,A {\rActive}RED{\rNormal}
+Dialogue: 0,0:00:33.14,0:00:33.54,Normal,,0,0,0,,{\rActive}FLARE{\rNormal} INTO
+Dialogue: 0,0:00:33.50,0:00:33.77,Normal,,0,0,0,,FLARE {\rActive}INTO{\rNormal}
+Dialogue: 0,0:00:33.73,0:00:34.09,Normal,,0,0,0,,{\rActive}AISLE{\rNormal} TWO
+Dialogue: 0,0:00:34.05,0:00:34.40,Normal,,0,0,0,,AISLE {\rActive}TWO{\rNormal}
+Dialogue: 0,0:00:34.36,0:00:34.53,Normal,,0,0,0,,{\rActive}AND{\rNormal} SPRINTED
+Dialogue: 0,0:00:34.49,0:00:34.94,Normal,,0,0,0,,AND {\rActive}SPRINTED{\rNormal}
+Dialogue: 0,0:00:34.90,0:00:35.07,Normal,,0,0,0,,{\rActive}FOR{\rNormal} THE
+Dialogue: 0,0:00:35.03,0:00:35.15,Normal,,0,0,0,,FOR {\rActive}THE{\rNormal}
+Dialogue: 0,0:00:35.11,0:00:35.43,Normal,,0,0,0,,{\rActive}HEAVY{\rNormal} FIRE
+Dialogue: 0,0:00:35.40,0:00:35.80,Normal,,0,0,0,,HEAVY {\rActive}FIRE{\rNormal}
+Dialogue: 0,0:00:35.76,0:00:36.21,Normal,,0,0,0,,{\rActive}DOOR{\rNormal} SAFE
+Dialogue: 0,0:00:36.98,0:00:37.65,Normal,,0,0,0,,DOOR {\rActive}SAFE{\rNormal}
+Dialogue: 0,0:00:38.40,0:00:38.64,Normal,,0,0,0,,{\rActive}BUT{\rNormal} LOOKING
+Dialogue: 0,0:00:38.60,0:00:38.94,Normal,,0,0,0,,BUT {\rActive}LOOKING{\rNormal}
+Dialogue: 0,0:00:38.90,0:00:39.03,Normal,,0,0,0,,{\rActive}AT{\rNormal} THE
+Dialogue: 0,0:00:38.99,0:00:39.12,Normal,,0,0,0,,AT {\rActive}THE{\rNormal}
+Dialogue: 0,0:00:39.09,0:00:39.47,Normal,,0,0,0,,{\rActive}STEEL{\rNormal} LATCH
+Dialogue: 0,0:00:39.43,0:00:39.91,Normal,,0,0,0,,STEEL {\rActive}LATCH{\rNormal}
+Dialogue: 0,0:00:40.11,0:00:40.28,Normal,,0,0,0,,{\rActive}THE{\rNormal} BLOOD
+Dialogue: 0,0:00:40.24,0:00:40.61,Normal,,0,0,0,,THE {\rActive}BLOOD{\rNormal}
+Dialogue: 0,0:00:40.57,0:00:40.73,Normal,,0,0,0,,{\rActive}ON{\rNormal} THE
+Dialogue: 0,0:00:40.69,0:00:40.80,Normal,,0,0,0,,ON {\rActive}THE{\rNormal}
+Dialogue: 0,0:00:40.76,0:00:41.32,Normal,,0,0,0,,{\rActive}INSIDE{\rNormal} HANDLE
+Dialogue: 0,0:00:41.28,0:00:41.68,Normal,,0,0,0,,INSIDE {\rActive}HANDLE{\rNormal}
+Dialogue: 0,0:00:41.65,0:00:41.95,Normal,,0,0,0,,{\rActive}WASN'T{\rNormal} MINE
+Dialogue: 0,0:00:41.92,0:00:42.38,Normal,,0,0,0,,WASN'T {\rActive}MINE{\rNormal}

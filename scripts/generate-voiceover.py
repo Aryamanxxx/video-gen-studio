@@ -5,7 +5,7 @@ Uses Microsoft edge-tts to synthesize broadcast-quality neural voiceovers and
 concurrently extract word-level timestamps for Remotion karaoke subtitles.
 
 Usage:
-  python scripts/generate-voiceover.py --text "Your voiceover script here" [--voice en-US-ChristopherNeural]
+  python scripts/generate-voiceover.py --text "Your voiceover script here" [--voice en-US-ChristopherNeural] [--rate +6%]
 
 Output:
   - public/assets/audio/voiceover.mp3
@@ -32,17 +32,18 @@ if sys.platform == "win32":
 DEFAULT_VOICE = "en-US-ChristopherNeural"
 DEFAULT_TEXT = "This is an autonomous, zero compute viral video studio producing high retention Reels at sixty frames per second."
 
-async def synthesize_with_retry(text: str, voice: str, audio_path: str, sub_path: str, max_retries: int = 3):
+async def synthesize_with_retry(text: str, voice: str, rate: str, audio_path: str, sub_path: str, max_retries: int = 3):
     os.makedirs(os.path.dirname(os.path.abspath(audio_path)), exist_ok=True)
     os.makedirs(os.path.dirname(os.path.abspath(sub_path)), exist_ok=True)
 
     last_error = None
     for attempt in range(1, max_retries + 1):
         try:
-            print(f"🎙️ Synthesizing voiceover with {voice} (Attempt {attempt}/{max_retries})...")
+            print(f"🎙️ Synthesizing voiceover with {voice} at rate {rate} (Attempt {attempt}/{max_retries})...")
             communicate = edge_tts.Communicate(
                 text=text,
                 voice=voice,
+                rate=rate,
                 boundary="WordBoundary"
             )
 
@@ -53,7 +54,6 @@ async def synthesize_with_retry(text: str, voice: str, audio_path: str, sub_path
                 if chunk["type"] == "audio":
                     audio_bytes.extend(chunk["data"])
                 elif chunk["type"] == "WordBoundary":
-                    # offset and duration are in 100-nanosecond ticks
                     start_sec = round(chunk["offset"] / 10_000_000.0, 3)
                     end_sec = round((chunk["offset"] + chunk["duration"]) / 10_000_000.0, 3)
                     word = chunk["text"].strip()
@@ -95,6 +95,7 @@ def main():
     parser.add_argument("positional_text", nargs="?", help="Voiceover text (optional if --text passed)")
     parser.add_argument("--text", "-t", help="Voiceover text to speak")
     parser.add_argument("--voice", "-v", default=DEFAULT_VOICE, help=f"Voice name (default: {DEFAULT_VOICE})")
+    parser.add_argument("--rate", "-r", default="+0%", help="Voice rate adjustment (e.g. +6%, +10%)")
     parser.add_argument("--audio-out", "-a", default="public/assets/audio/voiceover.mp3", help="Output MP3 path")
     parser.add_argument("--sub-out", "-s", default="public/assets/audio/subtitles.json", help="Output subtitles JSON path")
 
@@ -108,7 +109,7 @@ def main():
     audio_path = os.path.join(project_root, args.audio_out) if not os.path.isabs(args.audio_out) else args.audio_out
     sub_path = os.path.join(project_root, args.sub_out) if not os.path.isabs(args.sub_out) else args.sub_out
 
-    success = asyncio.run(synthesize_with_retry(text, args.voice, audio_path, sub_path))
+    success = asyncio.run(synthesize_with_retry(text, args.voice, args.rate, audio_path, sub_path))
     if not success:
         sys.exit(1)
 

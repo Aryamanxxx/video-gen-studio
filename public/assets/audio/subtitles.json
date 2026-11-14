@@ -1,102 +1,482 @@
 [
   {
-    "word": "Wait",
-    "start": 0.1,
-    "end": 0.487
+    "word": "Rule",
+    "start": 0.097,
+    "end": 0.392
   },
   {
-    "word": "stop",
-    "start": 0.738,
-    "end": 1.1
+    "word": "14",
+    "start": 0.404,
+    "end": 0.993
   },
   {
-    "word": "moving",
-    "start": 1.113,
-    "end": 1.625
+    "word": "Never",
+    "start": 1.288,
+    "end": 1.571
   },
   {
-    "word": "Did",
-    "start": 2.487,
-    "end": 2.65
+    "word": "grab",
+    "start": 1.583,
+    "end": 1.925
   },
   {
-    "word": "you",
-    "start": 2.663,
-    "end": 2.763
+    "word": "canned",
+    "start": 1.937,
+    "end": 2.255
   },
   {
-    "word": "hear",
-    "start": 2.775,
-    "end": 2.95
+    "word": "food",
+    "start": 2.267,
+    "end": 2.574
   },
   {
-    "word": "that",
-    "start": 2.962,
-    "end": 3.125
-  },
-  {
-    "word": "glass",
-    "start": 3.138,
-    "end": 3.438
-  },
-  {
-    "word": "shatter",
-    "start": 3.45,
-    "end": 3.95
-  },
-  {
-    "word": "Behind",
-    "start": 4.812,
-    "end": 5.213
+    "word": "from",
+    "start": 2.585,
+    "end": 2.703
   },
   {
     "word": "the",
-    "start": 5.225,
-    "end": 5.287
+    "start": 2.715,
+    "end": 2.786
   },
   {
-    "word": "counter",
-    "start": 5.3,
-    "end": 5.838
+    "word": "bottom",
+    "start": 2.798,
+    "end": 3.116
   },
   {
-    "word": "Two",
-    "start": 6.7,
-    "end": 6.963
+    "word": "shelf",
+    "start": 3.128,
+    "end": 3.541
   },
   {
-    "word": "walkers",
-    "start": 6.975,
-    "end": 7.45
+    "word": "during",
+    "start": 3.552,
+    "end": 3.788
   },
   {
-    "word": "incoming",
-    "start": 7.463,
-    "end": 8.125
+    "word": "an",
+    "start": 3.8,
+    "end": 3.883
   },
   {
-    "word": "Hold",
-    "start": 8.988,
-    "end": 9.25
+    "word": "outbreak",
+    "start": 3.894,
+    "end": 4.472
+  },
+  {
+    "word": "At",
+    "start": 5.283,
+    "end": 5.46
+  },
+  {
+    "word": "48 hours",
+    "start": 5.472,
+    "end": 6.344
+  },
+  {
+    "word": "post-infection",
+    "start": 6.356,
+    "end": 7.205
+  },
+  {
+    "word": "condensation",
+    "start": 7.417,
+    "end": 8.113
+  },
+  {
+    "word": "degrades",
+    "start": 8.125,
+    "end": 8.538
+  },
+  {
+    "word": "bottom",
+    "start": 8.55,
+    "end": 8.892
+  },
+  {
+    "word": "tin",
+    "start": 8.903,
+    "end": 9.151
+  },
+  {
+    "word": "seals",
+    "start": 9.163,
+    "end": 9.517
+  },
+  {
+    "word": "by",
+    "start": 9.528,
+    "end": 9.717
+  },
+  {
+    "word": "80%",
+    "start": 9.729,
+    "end": 10.531
+  },
+  {
+    "word": "Anaerobic",
+    "start": 11.344,
+    "end": 11.922
+  },
+  {
+    "word": "spores",
+    "start": 11.934,
+    "end": 12.276
+  },
+  {
+    "word": "incubate",
+    "start": 12.288,
+    "end": 12.783
+  },
+  {
+    "word": "inside",
+    "start": 12.795,
+    "end": 13.302
+  },
+  {
+    "word": "turning",
+    "start": 13.561,
+    "end": 13.844
+  },
+  {
+    "word": "contents",
+    "start": 13.856,
+    "end": 14.363
+  },
+  {
+    "word": "into",
+    "start": 14.375,
+    "end": 14.623
+  },
+  {
+    "word": "lethal",
+    "start": 14.634,
+    "end": 15.0
+  },
+  {
+    "word": "neurotoxin",
+    "start": 15.012,
+    "end": 15.778
+  },
+  {
+    "word": "I",
+    "start": 16.592,
+    "end": 16.71
+  },
+  {
+    "word": "needed",
+    "start": 16.722,
+    "end": 17.075
+  },
+  {
+    "word": "calories",
+    "start": 17.087,
+    "end": 17.689
+  },
+  {
+    "word": "but",
+    "start": 17.889,
+    "end": 18.031
+  },
+  {
+    "word": "adrenaline",
+    "start": 18.042,
+    "end": 18.55
+  },
+  {
+    "word": "made",
+    "start": 18.561,
+    "end": 18.738
+  },
+  {
+    "word": "my",
+    "start": 18.75,
+    "end": 18.856
+  },
+  {
+    "word": "trembling",
+    "start": 18.868,
+    "end": 19.387
+  },
+  {
+    "word": "elbow",
+    "start": 19.399,
+    "end": 19.693
+  },
+  {
+    "word": "clip",
+    "start": 19.705,
+    "end": 19.953
+  },
+  {
+    "word": "a",
+    "start": 19.965,
+    "end": 20.024
+  },
+  {
+    "word": "display",
+    "start": 20.035,
+    "end": 20.425
+  },
+  {
+    "word": "rack",
+    "start": 20.436,
+    "end": 20.884
+  },
+  {
+    "word": "Eighty",
+    "start": 21.698,
+    "end": 21.969
+  },
+  {
+    "word": "decibels",
+    "start": 21.981,
+    "end": 22.606
+  },
+  {
+    "word": "echoed",
+    "start": 22.618,
+    "end": 22.983
+  },
+  {
+    "word": "through",
+    "start": 22.995,
+    "end": 23.16
   },
   {
     "word": "the",
-    "start": 9.262,
-    "end": 9.363
+    "start": 23.172,
+    "end": 23.278
   },
   {
-    "word": "line",
-    "start": 9.375,
-    "end": 9.762
+    "word": "aisles",
+    "start": 23.29,
+    "end": 23.868
+  },
+  {
+    "word": "Distance",
+    "start": 24.682,
+    "end": 25.13
+  },
+  {
+    "word": "to",
+    "start": 25.142,
+    "end": 25.236
+  },
+  {
+    "word": "exit",
+    "start": 25.248,
+    "end": 25.672
+  },
+  {
+    "word": "14",
+    "start": 25.955,
+    "end": 26.462
+  },
+  {
+    "word": "meters",
+    "start": 26.474,
+    "end": 26.993
+  },
+  {
+    "word": "Three",
+    "start": 27.807,
+    "end": 28.137
+  },
+  {
+    "word": "blind",
+    "start": 28.149,
+    "end": 28.514
+  },
+  {
+    "word": "sprinters",
+    "start": 28.526,
+    "end": 28.974
+  },
+  {
+    "word": "breached",
+    "start": 28.986,
+    "end": 29.363
+  },
+  {
+    "word": "aisle",
+    "start": 29.375,
+    "end": 29.623
+  },
+  {
+    "word": "four",
+    "start": 29.634,
+    "end": 29.988
+  },
+  {
+    "word": "hunting",
+    "start": 30.212,
+    "end": 30.495
+  },
+  {
+    "word": "the",
+    "start": 30.507,
+    "end": 30.566
+  },
+  {
+    "word": "metallic",
+    "start": 30.578,
+    "end": 31.026
+  },
+  {
+    "word": "sound",
+    "start": 31.038,
+    "end": 31.557
+  },
+  {
+    "word": "I",
+    "start": 32.37,
+    "end": 32.535
+  },
+  {
+    "word": "hurled",
+    "start": 32.547,
+    "end": 32.83
+  },
+  {
+    "word": "a",
+    "start": 32.842,
+    "end": 32.866
+  },
+  {
+    "word": "red",
+    "start": 32.877,
+    "end": 33.137
+  },
+  {
+    "word": "flare",
+    "start": 33.149,
+    "end": 33.491
+  },
+  {
+    "word": "into",
+    "start": 33.502,
+    "end": 33.726
+  },
+  {
+    "word": "aisle",
+    "start": 33.738,
+    "end": 34.045
+  },
+  {
+    "word": "two",
+    "start": 34.057,
+    "end": 34.351
+  },
+  {
+    "word": "and",
+    "start": 34.363,
+    "end": 34.481
+  },
+  {
+    "word": "sprinted",
+    "start": 34.493,
+    "end": 34.894
+  },
+  {
+    "word": "for",
+    "start": 34.906,
+    "end": 35.024
+  },
+  {
+    "word": "the",
+    "start": 35.035,
+    "end": 35.106
+  },
+  {
+    "word": "heavy",
+    "start": 35.118,
+    "end": 35.389
   },
   {
     "word": "fire",
-    "start": 10.037,
-    "end": 10.438
+    "start": 35.401,
+    "end": 35.755
   },
   {
-    "word": "now",
-    "start": 10.45,
-    "end": 10.838
+    "word": "door",
+    "start": 35.767,
+    "end": 36.167
+  },
+  {
+    "word": "Safe",
+    "start": 36.981,
+    "end": 37.606
+  },
+  {
+    "word": "But",
+    "start": 38.408,
+    "end": 38.597
+  },
+  {
+    "word": "looking",
+    "start": 38.608,
+    "end": 38.892
+  },
+  {
+    "word": "at",
+    "start": 38.903,
+    "end": 38.986
+  },
+  {
+    "word": "the",
+    "start": 38.998,
+    "end": 39.08
+  },
+  {
+    "word": "steel",
+    "start": 39.092,
+    "end": 39.422
+  },
+  {
+    "word": "latch",
+    "start": 39.434,
+    "end": 39.87
+  },
+  {
+    "word": "the",
+    "start": 40.118,
+    "end": 40.236
+  },
+  {
+    "word": "blood",
+    "start": 40.248,
+    "end": 40.566
+  },
+  {
+    "word": "on",
+    "start": 40.578,
+    "end": 40.684
+  },
+  {
+    "word": "the",
+    "start": 40.696,
+    "end": 40.755
+  },
+  {
+    "word": "inside",
+    "start": 40.767,
+    "end": 41.274
+  },
+  {
+    "word": "handle",
+    "start": 41.285,
+    "end": 41.639
+  },
+  {
+    "word": "wasn't",
+    "start": 41.651,
+    "end": 41.91
+  },
+  {
+    "word": "mine",
+    "start": 41.922,
+    "end": 42.335
   }
 ]

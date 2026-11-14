@@ -1,36 +1,98 @@
 {
-  "episodeId": "ep-01-ambush-quicktest",
-  "title": "EPISODE 1: THE GAS STATION AMBUSH",
-  "totalDurationSeconds": 11,
+  "episodeId": "stickocalypse-ep1",
+  "title": "EPISODE 1: THE LAST SUPERMARKET",
+  "totalDurationSeconds": 24.5,
   "fps": 30,
   "seed": 924710,
-  "voiceRate": "+8%",
-  "voiceTone": "urgent, breathless survival whisper",
-  "fullScript": "Wait... stop moving! Did you hear that glass shatter? Behind the counter! Two walkers incoming! Hold the line—fire now!",
+  "voiceRate": "+6%",
+  "voiceTone": "clinical, intense, authoritative whisper",
+  "fullScript": "Rule 14: Never grab canned food from the bottom shelf during an outbreak. At 48 hours post-infection, condensation degrades bottom tin seals by 80%. Anaerobic spores incubate inside, turning contents into lethal neurotoxin. I needed calories, but adrenaline made my trembling elbow clip a display rack. Eighty decibels echoed through the aisles. Distance to exit: 14 meters. Three blind sprinters breached aisle four, hunting the metallic sound. I hurled a red flare into aisle two and sprinted for the heavy fire door. Safe. But looking at the steel latch... the blood on the inside handle wasn't mine.",
   "beats": [
     {
       "beatNumber": 1,
-      "durationSeconds": 4.0,
-      "dialogue": "Wait... stop moving! Did you hear that glass shatter?",
-      "prompt": "stickman protagonist in red beanie frozen in shock holding flashlight in dark ruined store aisle, shattered glass on floor, dark shadows, cinematic contrast",
-      "actionType": "stealth",
-      "cameraMove": "zoom_in"
+      "durationSeconds": 3.0,
+      "cameraScale": "Close-Up",
+      "dialogue": "Rule 14: Never grab canned food from the bottom shelf during an outbreak.",
+      "prompt": "close-up 2D comic art of gloved stickman hand reaching towards rusted dented metal cans on a bottom grocery shelf, dark gritty atmosphere, green spore dust, dim supermarket lighting",
+      "actionType": "reach",
+      "cameraMove": "push_in",
+      "sfx": "metal_clink"
     },
     {
       "beatNumber": 2,
-      "durationSeconds": 4.0,
-      "dialogue": "Behind the counter! Two walkers incoming!",
-      "prompt": "stickman protagonist in red beanie stepping back in shock as two dark shadow infected with glowing yellow eyes lunge over convenience store counter",
-      "actionType": "panic",
-      "cameraMove": "shake"
+      "durationSeconds": 3.0,
+      "cameraScale": "Extreme Close-Up",
+      "dialogue": "At 48 hours post-infection, condensation degrades bottom tin seals by 80%.",
+      "prompt": "extreme close-up 2D vector comic shot of a rusted tin can seam cracking open, toxic green bubbly liquid oozing from broken seal onto dark damp concrete floor, macro view",
+      "actionType": "leak",
+      "cameraMove": "slow_zoom",
+      "sfx": "hiss_spores"
     },
     {
       "beatNumber": 3,
       "durationSeconds": 3.0,
-      "dialogue": "Hold the line—fire now!",
-      "prompt": "stickman protagonist in red beanie firing shotgun with fiery bright orange muzzle flash, infected blown backward through broken shelves, dynamic comic action",
-      "actionType": "combat",
-      "cameraMove": "punch_in"
+      "cameraScale": "Medium",
+      "dialogue": "Anaerobic spores incubate inside, turning contents into lethal neurotoxin.",
+      "prompt": "medium shot 2D stickman in crimson red beanie and dark survival jacket looking up with intense worried eyes at higher grocery shelves in a pitch dark abandoned supermarket aisle",
+      "actionType": "inspect",
+      "cameraMove": "tilt_up",
+      "sfx": "sub_bass_drop"
+    },
+    {
+      "beatNumber": 4,
+      "durationSeconds": 3.0,
+      "cameraScale": "Close-Up",
+      "dialogue": "I needed calories, but adrenaline made my trembling elbow clip a display rack.",
+      "prompt": "dramatic close-up 2D comic vector action of stickman elbow accidentally striking a tall metal shelving unit, metal cans vibrating and teetering on edge",
+      "actionType": "impact",
+      "cameraMove": "shake",
+      "sfx": "metal_screech"
+    },
+    {
+      "beatNumber": 5,
+      "durationSeconds": 3.0,
+      "cameraScale": "Wide",
+      "dialogue": "Eighty decibels echoed through the aisles. Distance to exit: 14 meters.",
+      "prompt": "wide cinematic 2D comic perspective down a dark vast supermarket aisle, collapsed shelves, distant red exit sign glowing faint in fog, glowing red eyes appearing in far darkness",
+      "actionType": "scan",
+      "cameraMove": "zoom_out",
+      "sfx": "shutter_slam"
+    },
+    {
+      "beatNumber": 6,
+      "durationSeconds": 3.0,
+      "cameraScale": "Medium",
+      "dialogue": "Three blind sprinters breached aisle four, hunting the metallic sound.",
+      "prompt": "dynamic action 2D vector comic of stickman in red beanie sprinting at full speed down the supermarket aisle away from ferocious shadowy mutant runners chasing close behind",
+      "actionType": "run",
+      "isActionShot": true,
+      "startPrompt": "stickman in red beanie initiating explosive sprint away from encroaching shadow beasts in supermarket",
+      "endPrompt": "stickman in red beanie leaping forward through air past fallen grocery carts while sprinting for life",
+      "cameraMove": "truck_right",
+      "sfx": "running_footsteps"
+    },
+    {
+      "beatNumber": 7,
+      "durationSeconds": 3.0,
+      "cameraScale": "Close-Up",
+      "dialogue": "I hurled a red flare into aisle two and sprinted for the heavy fire door.",
+      "prompt": "close-up 2D comic action shot of stickman violently igniting and throwing a brilliant glowing crimson red emergency flare across dark grocery aisle, bright red sparks flying",
+      "actionType": "flare",
+      "isActionShot": true,
+      "startPrompt": "stickman striking red emergency flare with sparks erupting",
+      "endPrompt": "burning flare soaring through dark aisle illuminating snarling zombie faces in crimson light",
+      "cameraMove": "snap_zoom",
+      "sfx": "flare_ignite"
+    },
+    {
+      "beatNumber": 8,
+      "durationSeconds": 3.5,
+      "cameraScale": "Extreme Close-Up",
+      "dialogue": "Safe. But looking at the steel latch... the blood on the inside handle wasn't mine.",
+      "prompt": "extreme close-up 2D comic reveal of stickman gloved hand pressing against heavy steel exit latch, fresh glistening dark black infected blood smeared across the inner locking mechanism, shocking realization",
+      "actionType": "twist",
+      "cameraMove": "push_in",
+      "sfx": "heartbeat_pulse"
     }
   ]
 }
