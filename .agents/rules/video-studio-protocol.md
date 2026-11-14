@@ -137,3 +137,14 @@ The studio operates two specialized production engines:
     2. Confirm aspect ratio and dimensions match 9:16 vertical standards (768x1344 or 1080x1920).
     3. Verify that the image contents strictly depict the Character Bible (round white stickman head, expressive eyes, thick black ink outlines, crimson red beanie, tactical backpack, dark apocalyptic zombie background) rather than random unrelated pictures.
   - If any beat fails this inspection, it must be regenerated with an adjusted seed or failover space before proceeding to compilation.
+
+
+---
+
+### Law 12: 100% Animated Video — Zero Static Images
+- **Total Ban on Static Image Slideshows & Pan/Zoom Ken-Burns**:
+  - Static images, motion-comic photo cutouts with FFmpeg `zoompan`, and Ken-Burns still-frame panning are permanently banned in narrative episodes.
+  - Every single beat in `episode-plan.json` MUST be realized as an authentic `.mp4` video clip (`public/story/clips/clip-XX.mp4`) with continuous frame-by-frame character locomotion, facial expressions, physics, and camera motion.
+- **Production Architecture**:
+  - All scene clips are generated via `scripts/generate-all-video-clips.py` using multi-backend parallelization (Google Veo / Gemini API, remote GPU workers, or multi-space load-balanced ZeroGPU pools).
+  - The direct fast compiler (`scripts/compile-story-fast.mjs`) strictly enforces this rule: if any beat is missing an animated `.mp4` clip, compilation fails immediately with an error rather than falling back to a static still.

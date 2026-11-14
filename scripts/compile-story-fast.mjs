@@ -102,73 +102,32 @@ function runFFmpeg(cmd, args) {
 async function renderBeatChunk(ffmpegBin, beatNumber, beat, duration, chunkOut) {
   const padNum = String(beatNumber).padStart(2, '0');
   const clipFile = path.join(rootDir, 'public', 'story', 'clips', `clip-${padNum}.mp4`);
-  const beatFile = path.join(rootDir, 'public', 'story', 'beats', `beat-${padNum}.jpg`);
-
   const durStr = duration.toFixed(3);
 
-  // CASE 1: Real AI-Animated Video Clip exists
-  if (fs.existsSync(clipFile) && fs.statSync(clipFile).size > 20000) {
-    console.log(`[FFmpeg-Compiler] 🎬 Beat #${beatNumber}: Using Real AI-Animated Clip (${path.basename(clipFile)})`);
-    const args = [
-      '-y',
-      '-stream_loop', '-1',
-      '-i', clipFile,
-      '-t', durStr,
-      '-vf', 'scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,vignette=PI/5,format=yuv420p',
-      '-c:v', 'libx264',
-      '-preset', 'ultrafast',
-      '-crf', '20',
-      '-r', '30',
-      '-an',
-      chunkOut
-    ];
-    await runFFmpeg(ffmpegBin, args);
-    return;
+  // STRICT LAW 12 ENFORCEMENT: ONLY REAL ANIMATED .MP4 CLIPS ALLOWED
+  if (!fs.existsSync(clipFile) || fs.statSync(clipFile).size < 20000) {
+    throw new Error(
+      `[FFmpeg-Compiler] ❌ VIOLATION OF LAW 12: Beat #${beatNumber} is missing real animated video clip "${path.basename(clipFile)}"! ` +
+      `Static images and zoompan slideshows are permanently banned. Every beat must be a real frame-by-frame animated .mp4 video clip. ` +
+      `Run "python scripts/generate-all-video-clips.py" to generate video clips before compiling.`
+    );
   }
 
-  // CASE 2: High-Resolution FLUX.1 Still with Cinematic Camera Move
-  if (fs.existsSync(beatFile)) {
-    console.log(`[FFmpeg-Compiler] 🖼️ Beat #${beatNumber}: Using FLUX.1 Still with Camera Movement (${path.basename(beatFile)})`);
-    const totalFrames = Math.max(1, Math.round(duration * 30));
-    
-    // Choose camera movement based on cameraMove / actionType
-    const moveType = beat.cameraMove || 'zoom_in';
-    let zoomExpr;
-    if (moveType === 'shake' || beat.actionType === 'panic') {
-      // Dynamic camera shake
-      zoomExpr = `'min(1.08+0.03*sin(2*PI*3*on/30),1.25)'`;
-    } else if (moveType === 'punch_in' || beat.actionType === 'combat') {
-      // Fast dramatic punch-in
-      zoomExpr = `'min(1.0+0.18*on/${totalFrames},1.22)'`;
-    } else {
-      // Smooth cinematic push-in
-      zoomExpr = `'min(1.0+0.12*on/${totalFrames},1.15)'`;
-    }
-
-    const vf = [
-      `zoompan=z=${zoomExpr}:d=${totalFrames}:x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':s=1080x1920:fps=30`,
-      'vignette=PI/5',
-      'format=yuv420p'
-    ].join(',');
-
-    const args = [
-      '-y',
-      '-loop', '1',
-      '-i', beatFile,
-      '-t', durStr,
-      '-vf', vf,
-      '-c:v', 'libx264',
-      '-preset', 'ultrafast',
-      '-crf', '20',
-      '-r', '30',
-      '-an',
-      chunkOut
-    ];
-    await runFFmpeg(ffmpegBin, args);
-    return;
-  }
-
-  throw new Error(`Neither clip nor beat image found for Beat #${beatNumber}!`);
+  console.log(`[FFmpeg-Compiler] 🎬 Beat #${beatNumber}: Using Real AI-Animated Video Clip (${path.basename(clipFile)})`);
+  const args = [
+    '-y',
+    '-stream_loop', '-1',
+    '-i', clipFile,
+    '-t', durStr,
+    '-vf', 'scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,vignette=PI/5,format=yuv420p',
+    '-c:v', 'libx264',
+    '-preset', 'ultrafast',
+    '-crf', '19',
+    '-r', '30',
+    '-an',
+    chunkOut
+  ];
+  await runFFmpeg(ffmpegBin, args);
 }
 
 async function main() {
@@ -190,6 +149,7 @@ async function main() {
   const finalOutput = path.join(outputDir, 'latest-episode.mp4');
   const cloudEpisodeOutput = path.join(outputDir, 'real-cloud-episode.mp4');
   const storyEpisodeOutput = path.join(outputDir, 'story-episode.mp4');
+  const allVideoOutput = path.join(outputDir, 'all-video-episode.mp4');
 
   // 1. Audio validation & total duration
   if (!fs.existsSync(audioPath)) {
@@ -285,6 +245,7 @@ async function main() {
   // Copy to destination files
   fs.copyFileSync(finalOutput, cloudEpisodeOutput);
   fs.copyFileSync(finalOutput, storyEpisodeOutput);
+  fs.copyFileSync(finalOutput, allVideoOutput);
 
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
   const stat = fs.statSync(finalOutput);
@@ -293,6 +254,7 @@ async function main() {
   console.log(`[FFmpeg-Compiler] Output: ${finalOutput} (${(stat.size / 1024 / 1024).toFixed(2)} MB)`);
   console.log(`[FFmpeg-Compiler] Output: ${cloudEpisodeOutput}`);
   console.log(`[FFmpeg-Compiler] Output: ${storyEpisodeOutput}`);
+  console.log(`[FFmpeg-Compiler] Output: ${allVideoOutput}`);
   console.log(`======================================================\n`);
 }
 
